@@ -14,12 +14,12 @@ const material = new THREE.MeshStandardMaterial({
 })
 
 /*
+  Red: CB0009
+  Orange: FF7400  
   White: FFFFFF
   Yellow: FFDD00
-  Red: CB0009
-  Orange: FF7400
-  Blue: 1159FF
   Green: 00D53A
+  Blue: 1159FF
 */
 const faceColors =[];
 const white = new THREE.Color();
@@ -34,15 +34,17 @@ const blue = new THREE.Color();
 blue.setHex(0x1159ff);
 const green = new THREE.Color();
 green.setHex(0x00d53a);
+const black = new THREE.Color();
+black.setHex(0x000000);
 
 
-
-faceColors.push(white);
-faceColors.push(yellow);
 faceColors.push(red);
 faceColors.push(orange);
-faceColors.push(blue);
+faceColors.push(white);
+faceColors.push(yellow);
 faceColors.push(green);
+faceColors.push(blue);
+faceColors.push(black);
 
 function generateCube(x,y,z){
   var cubeGeometry = new THREE.BoxGeometry(0.98,0.98,0.98).toNonIndexed();
@@ -50,12 +52,20 @@ function generateCube(x,y,z){
   const positionAttribute = cubeGeometry.getAttribute('position');
   const colors = [];
   for(let i =0; i<6; i++){
+    let index = 6;
+    if(i ===0 && x === 1) index = 0;
+    if(i ===1 && x ===-1) index = 1;
+    if(i ===2 && y === 1) index = 2;
+    if(i ===3 && y ===-1) index = 3;
+    if(i ===4 && z === 1) index = 4;
+    if(i ===5 && z ===-1) index = 5;
+    
     for(let j =0; j<6; j++){
-      colors.push(faceColors[i].r,faceColors[i].g,faceColors[i].b);
+      colors.push(faceColors[index].r,faceColors[index].g,faceColors[index].b);
     }
-    //rn, this does work. if we want to make it more aesthetic, make the not shown faces black
-      //requires more care in the generative step here
   }
+    
+  
 
   // define the new attribute
   cubeGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
@@ -66,6 +76,13 @@ function generateCube(x,y,z){
 
   scene.add(cube)
 }
+/*
+  default cube orientation:
+  green facing up, orange left, white away
+  x is right left
+  y is up down
+  z is towards away from viewer
+*/
 for(let z =-1; z<=1; z++){
   for(let y = -1; y<=1; y++){
     for(let x = -1; x<=1; x++){
