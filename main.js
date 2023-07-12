@@ -46,6 +46,7 @@ faceColors.push(green);
 faceColors.push(blue);
 faceColors.push(black);
 
+const fullCube = [];
 function generateCube(x,y,z){
   var cubeGeometry = new THREE.BoxGeometry(0.98,0.98,0.98).toNonIndexed();
 
@@ -63,10 +64,7 @@ function generateCube(x,y,z){
     for(let j =0; j<6; j++){
       colors.push(faceColors[index].r,faceColors[index].g,faceColors[index].b);
     }
-  }
-    
-  
-
+  }  
   // define the new attribute
   cubeGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
   var cube = new THREE.Mesh(cubeGeometry,material)
@@ -74,7 +72,7 @@ function generateCube(x,y,z){
   cube.position.y = y;
   cube.position.x = x;
 
-  scene.add(cube)
+  fullCube.push(cube)
 }
 /*
   default cube orientation:
@@ -83,6 +81,8 @@ function generateCube(x,y,z){
   y is up down
   z is towards away from viewer
 */
+//function to rotate object, certain degrees
+
 for(let z =-1; z<=1; z++){
   for(let y = -1; y<=1; y++){
     for(let x = -1; x<=1; x++){
@@ -91,7 +91,13 @@ for(let z =-1; z<=1; z++){
   }
 }
 
+var xAxis = new THREE.Vector3(1,0,0);
+var yAxis = new THREE.Vector3(0,1,0);
+var zAxis = new THREE.Vector3(0,0,1);
 
+for(let i =0; i < fullCube.length; i++){
+  scene.add(fullCube[i]);
+}
 
 
 //sizes
@@ -149,9 +155,13 @@ loop()
 
 //timeline magic, synchronize multiple animations tgt
 const tl = gsap.timeline({defaults: {duration: 1}})//default time duration is 1 second
-tl.fromTo(cube.scale, {z:0,x:0,y:0}, {z:1,x:1,y:1})//animation to start; scales all the axis
+
+//need to make a rubiks cube object, so it all scales in nicely
+
+tl.fromTo(fullCube.scale, {z:0,x:0,y:0}, {z:1,x:1,y:1})//animation to start; scales all the axis
 tl.fromTo('nav', {y: "-100%"}, {y:"0%"})//animates the nav bar in
 tl.fromTo('.title', {opacity:0},{opacity:1})//fades in the title
+tl.fromTo('.moveBtnGroup', {opacity:0},{opacity:1})
 
 //mouse animation color
 // let mouseDown = false
@@ -172,4 +182,7 @@ tl.fromTo('.title', {opacity:0},{opacity:1})//fades in the title
 //   }
 // })
 
-
+document.getElementById("moveF").addEventListener("click", go, false);
+function go(){
+  alert("jes test");
+}
