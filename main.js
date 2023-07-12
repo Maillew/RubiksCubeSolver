@@ -10,20 +10,66 @@ const scene = new THREE.Scene()
 
 //shape
 const material = new THREE.MeshStandardMaterial({
-  color: '#00ffffff',
-  vertexColors: THREE.FaceColors
+  vertexColors: true
 })
 
+/*
+  White: FFFFFF
+  Yellow: FFDD00
+  Red: CB0009
+  Orange: FF7400
+  Blue: 1159FF
+  Green: 00D53A
+*/
+const faceColors =[];
+const white = new THREE.Color();
+white.setHex(0xffffff);
+const yellow = new THREE.Color();
+yellow.setHex(0xffdd00);
+const red = new THREE.Color();
+red.setHex(0xcb0009);
+const orange = new THREE.Color();
+orange.setHex(0xff7400);
+const blue = new THREE.Color();
+blue.setHex(0x1159ff);
+const green = new THREE.Color();
+green.setHex(0x00d53a);
+
+
+
+faceColors.push(white);
+faceColors.push(yellow);
+faceColors.push(red);
+faceColors.push(orange);
+faceColors.push(blue);
+faceColors.push(green);
+
+function generateCube(x,y,z){
+  var cubeGeometry = new THREE.BoxGeometry(0.98,0.98,0.98).toNonIndexed();
+
+  const positionAttribute = cubeGeometry.getAttribute('position');
+  const colors = [];
+  for(let i =0; i<6; i++){
+    for(let j =0; j<6; j++){
+      colors.push(faceColors[i].r,faceColors[i].g,faceColors[i].b);
+    }
+    //rn, this does work. if we want to make it more aesthetic, make the not shown faces black
+      //requires more care in the generative step here
+  }
+
+  // define the new attribute
+  cubeGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+  var cube = new THREE.Mesh(cubeGeometry,material)
+  cube.position.z = z;
+  cube.position.y = y;
+  cube.position.x = x;
+
+  scene.add(cube)
+}
 for(let z =-1; z<=1; z++){
   for(let y = -1; y<=1; y++){
     for(let x = -1; x<=1; x++){
-      var cubeGeometry = new THREE.BoxGeometry(0.97,0.97,0.97)
-      var cube = new THREE.Mesh(cubeGeometry,material)
-      cube.position.z = z;
-      cube.position.y = y;
-      cube.position.x = x;
-
-      scene.add(cube)
+      generateCube(x,y,z)
     }
   }
 }
@@ -91,22 +137,22 @@ tl.fromTo('nav', {y: "-100%"}, {y:"0%"})//animates the nav bar in
 tl.fromTo('.title', {opacity:0},{opacity:1})//fades in the title
 
 //mouse animation color
-let mouseDown = false
-let rgb = [12,23,]
+// let mouseDown = false
+// let rgb = [12,23,]
 
-window.addEventListener("mousedown", () => (mouseDown = true))
-window.addEventListener("mouseup", () => (mouseDown = false))//makes it so that changes only happens when we are clicking down
-window.addEventListener("mousemove", (e) => {
-  if(mouseDown){
-    rgb = [
-      Math.round((e.pageX / sizes.width) * 255),
-      Math.round((e.pageX / sizes.width) * 255),
-      150,
-    ]
-    //animate
-    let newColor = new THREE.Color(`rgb(${rgb.join(",")})`)
-    gsap.to(cube.material.color, {r: newColor.r, g: newColor.g, b: newColor.b})
-  }
-})
+// window.addEventListener("mousedown", () => (mouseDown = true))
+// window.addEventListener("mouseup", () => (mouseDown = false))//makes it so that changes only happens when we are clicking down
+// window.addEventListener("mousemove", (e) => {
+//   if(mouseDown){
+//     rgb = [
+//       Math.round((e.pageX / sizes.width) * 255),
+//       Math.round((e.pageX / sizes.width) * 255),
+//       150,
+//     ]
+//     //animate
+//     let newColor = new THREE.Color(`rgb(${rgb.join(",")})`)
+//     gsap.to(cube.material.color, {r: newColor.r, g: newColor.g, b: newColor.b})
+//   }
+// })
 
 
