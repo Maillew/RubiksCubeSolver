@@ -18,17 +18,20 @@ nav{
     color: white;
     z-index: 2;
     position: relative;
-    padding: 4rem 8rem;
+    padding: 2rem 6rem;
     display: flex;
     justify-content: space-between;
     font-family: 'Poppins', sans-serif;
+    cursor: pointer; /* Pointer/hand icon */
 }
 nav a{
     text-decoration: none;
     color: white;
     font-weight: bold;
+    font-size: 36px;
 }
 nav ul{
+    font-size: 36px;
     list-style: none;
     display: flex;
     gap: 4rem;
@@ -48,20 +51,20 @@ nav ul{
 .moveBtns{
     background-color: rgb(0, 0, 0); 
     color: white; /* White text */
-    top: 200px;
-    right: 0;
-    width: 150px;
-    height: 500px;
+    
 
     table-layout: fixed;
     border-collapse: collapse;
 
-    cursor: pointer; /* Pointer/hand icon */
+    cursor: pointer; /*Pointer/hand icon*/
     float: left; /* Float the buttons side by side */
 
-    position: absolute;
+    position: absolute; /*RN CANT BE ABSOLUTE, CUZ ITS UGLY WHEN WINDOW SIZE IS DIFF!! try to make it more like the navbar*/
     z-index: 3;
-
+    top: 150px;
+    right: 175px;
+    width: 150px;
+    height: 500px;
 }
 /* Clear floats (clearfix hack) */
 .moveBtns:after {
@@ -76,11 +79,17 @@ nav ul{
 }
 
 .moveBtns button{
-    font-size: 24px;
+    font-size: 20px;
     font-family: 'Poppins', sans-serif;
 
     width: 90%;
     height: 90%;
     margin: 5px;
     table-layout: fixed;
+    cursor: pointer;
+}
+
+.moveBtns caption{
+    font-size: 28px;
+    font-family: 'Poppins', sans-serif;
 }
