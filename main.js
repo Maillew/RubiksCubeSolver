@@ -91,10 +91,6 @@ for(let z =-1; z<=1; z++){
   }
 }
 
-var xAxis = new THREE.Vector3(1,0,0);
-var yAxis = new THREE.Vector3(0,1,0);
-var zAxis = new THREE.Vector3(0,0,1);
-
 for(let i =0; i < fullCube.length; i++){
   scene.add(fullCube[i]);
 }
@@ -143,8 +139,8 @@ const controls = new OrbitControls(camera,canvas)
 controls.enableDamping = true
 controls.enablePan = false//cant move object around, always centered
 controls.enableZoom = false//no zooming in
-controls.autoRotate = true
-controls.autoRotateSpeed = 5 
+// controls.autoRotate = true
+// controls.autoRotateSpeed = 5 
 
 const loop = () =>{//rerender it, so that the cube is in right position
   controls.update()
@@ -158,10 +154,10 @@ const tl = gsap.timeline({defaults: {duration: 1}})//default time duration is 1 
 
 //need to make a rubiks cube object, so it all scales in nicely
 
-tl.fromTo(fullCube.scale, {z:0,x:0,y:0}, {z:1,x:1,y:1})//animation to start; scales all the axis
-tl.fromTo('nav', {y: "-100%"}, {y:"0%"})//animates the nav bar in
-tl.fromTo('.title', {opacity:0},{opacity:1})//fades in the title
-tl.fromTo('.moveBtnGroup', {opacity:0},{opacity:1})
+// tl.fromTo(fullCube.scale, {z:0,x:0,y:0}, {z:1,x:1,y:1})//animation to start; scales all the axis
+// tl.fromTo('nav', {y: "-100%"}, {y:"0%"})//animates the nav bar in
+// tl.fromTo('.title', {opacity:0},{opacity:1})//fades in the title
+// tl.fromTo('.moveBtns', {opacity:0},{opacity:1})
 
 //mouse animation color
 // let mouseDown = false
@@ -182,7 +178,112 @@ tl.fromTo('.moveBtnGroup', {opacity:0},{opacity:1})
 //   }
 // })
 
-document.getElementById("moveF").addEventListener("click", go, false);
-function go(){
-  alert("jes test");
+//buttons for rotations
+const axesHelper = new THREE.AxesHelper(10);
+scene.add(axesHelper);
+
+const xAxis = new THREE.Vector3(1,0,0);//red
+const yAxis = new THREE.Vector3(0,1,0);//green
+const zAxis = new THREE.Vector3(0,0,1);//blue
+
+const epsilon = 0.5;
+function checkCoordSame(c1, val, axis){
+  if(axis =='x') return c1.position.x > val - epsilon && c1.position.x < val + epsilon;
+  if(axis =='y') return c1.position.y > val - epsilon && c1.position.y < val + epsilon;
+  if(axis =='z') return c1.position.z > val - epsilon && c1.position.z < val + epsilon;  
 }
+
+document.getElementById("moveF") .addEventListener("click", rotateF,  false);
+document.getElementById("moveFi").addEventListener("click", rotateFi, false);
+document.getElementById("moveB") .addEventListener("click", rotateB,  false);
+document.getElementById("moveBi").addEventListener("click", rotateBi, false);
+document.getElementById("moveL") .addEventListener("click", rotateL,  false);
+document.getElementById("moveLi").addEventListener("click", rotateLi, false);
+document.getElementById("moveRi").addEventListener("click", rotateR,  false);
+document.getElementById("moveR") .addEventListener("click", rotateRi, false);
+document.getElementById("moveU") .addEventListener("click", rotateU,  false);
+document.getElementById("moveUi").addEventListener("click", rotateUi, false);
+document.getElementById("moveD") .addEventListener("click", rotateD,  false);
+document.getElementById("moveDi").addEventListener("click", rotateDi, false);
+document.getElementById("moveM") .addEventListener("click", rotateM,  false);
+document.getElementById("moveMi").addEventListener("click", rotateMi, false);
+document.getElementById("moveE") .addEventListener("click", rotateE,  false);
+document.getElementById("moveEi").addEventListener("click", rotateEi, false);
+document.getElementById("moveS") .addEventListener("click", rotateS,  false);
+document.getElementById("moveSi").addEventListener("click", rotateSi, false);
+
+function executeRotate(axis, angle, coord){//need to add tweening to this or wtv to make it smoother later
+  for(let i =0; i<fullCube.length; i++){
+    if(checkCoordSame(fullCube[i],coord,axis)){
+      if(axis == 'x'){
+        fullCube[i].position.applyAxisAngle(xAxis,angle);
+        fullCube[i].rotateOnWorldAxis(xAxis,angle);
+      }
+      if(axis == 'y'){
+        fullCube[i].position.applyAxisAngle(yAxis,angle);
+        fullCube[i].rotateOnWorldAxis(yAxis,angle);
+      }
+      if(axis == 'z'){
+        fullCube[i].position.applyAxisAngle(zAxis,angle);
+        fullCube[i].rotateOnWorldAxis(zAxis,angle);
+      }
+    }
+  }
+}
+
+function rotateF(){
+  executeRotate('z',3*Math.PI/2,1);
+}
+function rotateFi(){
+  executeRotate('z',Math.PI/2,1);
+}
+function rotateB(){
+  executeRotate('z',Math.PI/2,-1);
+}
+function rotateBi(){
+  executeRotate('z',3*Math.PI/2,-1);
+}
+function rotateL(){
+  executeRotate('x',Math.PI/2,-1);
+}
+function rotateLi(){
+  executeRotate('x',3*Math.PI/2,-1);
+}
+function rotateR(){
+  executeRotate('x',Math.PI/2,1);
+}
+function rotateRi(){
+  executeRotate('x',3*Math.PI/2,1);
+}
+function rotateU(){
+  executeRotate('y',3*Math.PI/2,1);
+}
+function rotateUi(){
+  executeRotate('y',Math.PI/2,1);
+}
+function rotateD(){
+  executeRotate('y',Math.PI/2,-1);
+}
+function rotateDi(){
+  executeRotate('y',3*Math.PI/2,-1);
+}
+// M follows L direction, E follows D direction, S follows F direction
+function rotateM(){
+  executeRotate('x',Math.PI/2,0);
+}
+function rotateMi(){
+  executeRotate('x',3*Math.PI/2,0);
+}
+function rotateE(){
+  executeRotate('y',Math.PI/2,0);
+}
+function rotateEi(){
+  executeRotate('y',3*Math.PI/2,0);
+}
+function rotateS(){
+  executeRotate('z',3*Math.PI/2,0);
+}
+function rotateSi(){
+  executeRotate('z',Math.PI/2,0);
+}
+
