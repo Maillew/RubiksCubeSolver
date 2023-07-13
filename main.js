@@ -4,146 +4,159 @@ import "./style.css"
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 import gsap from 'gsap'
 
-const scene = new THREE.Scene()
-const solver = new Solver();
 
-//z is towards viewer
-//y is up
-//x is to the right
-
-//shape
-const material = new THREE.MeshStandardMaterial({
-  vertexColors: true
-})
-
-/*
-  Red: CB0009
-  Orange: FF7400  
-  White: FFFFFF
-  Yellow: FFDD00
-  Green: 00D53A
-  Blue: 1159FF
-*/
-const faceColors =[];
-const white = new THREE.Color();
-white.setHex(0xffffff);
-const yellow = new THREE.Color();
-yellow.setHex(0xffdd00);
-const red = new THREE.Color();
-red.setHex(0xcb0009);
-const orange = new THREE.Color();
-orange.setHex(0xff7400);
-const blue = new THREE.Color();
-blue.setHex(0x1159ff);
-const green = new THREE.Color();
-green.setHex(0x00d53a);
-const black = new THREE.Color();
-black.setHex(0x000000);
+export default class RubiksCube{
+  constructor(){
+    this.scene = new THREE.Scene()
+    this.material = new THREE.MeshStandardMaterial({
+      vertexColors: true
+    })
+    this.faceColors =[];
+    this.white = new THREE.Color();
+    this.white.setHex(0xffffff);
+    this.yellow = new THREE.Color();
+    this.yellow.setHex(0xffdd00);
+    this.red = new THREE.Color();
+    this.red.setHex(0xcb0009);
+    this.orange = new THREE.Color();
+    this.orange.setHex(0xff7400);
+    this.blue = new THREE.Color();
+    this.blue.setHex(0x1159ff);
+    this.green = new THREE.Color();
+    this.green.setHex(0x00d53a);
+    this.black = new THREE.Color();
+    this.black.setHex(0x000000);
 
 
-faceColors.push(red);
-faceColors.push(orange);
-faceColors.push(white);
-faceColors.push(yellow);
-faceColors.push(green);
-faceColors.push(blue);
-faceColors.push(black);
+    this.faceColors.push(red);
+    this.faceColors.push(orange);
+    this.faceColors.push(white);
+    this.faceColors.push(yellow);
+    this.faceColors.push(green);
+    this.faceColors.push(blue);
+    this.faceColors.push(black);
 
-const fullCube = [];
-function generateCube(x,y,z){
-  var cubeGeometry = new THREE.BoxGeometry(0.98,0.98,0.98).toNonIndexed();
-
-  const positionAttribute = cubeGeometry.getAttribute('position');
-  const colors = [];
-  for(let i =0; i<6; i++){
-    let index = 6;
-    if(i ===0 && x === 1) index = 0;
-    if(i ===1 && x ===-1) index = 1;
-    if(i ===2 && y === 1) index = 2;
-    if(i ===3 && y ===-1) index = 3;
-    if(i ===4 && z === 1) index = 4;
-    if(i ===5 && z ===-1) index = 5;
-    
-    for(let j =0; j<6; j++){
-      colors.push(faceColors[index].r,faceColors[index].g,faceColors[index].b);
+    this.fullCube = [];
+    //sizes
+    this.sizes = {
+      width: window.innerWidth,
+      height: window.innerHeight
     }
-  }  
-  // define the new attribute
-  cubeGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-  var cube = new THREE.Mesh(cubeGeometry,material)
-  cube.position.z = z;
-  cube.position.y = y;
-  cube.position.x = x;
 
-  fullCube.push(cube)
-}
-/*
-  default cube orientation:
-  green facing up, orange left, white away
-  x is right left
-  y is up down
-  z is towards away from viewer
-*/
-//function to rotate object, certain degrees
+    //light
+    this.light = new THREE.PointLight(0xffffff, 1, 100)
+    this.light.position.set(10,10,10)//x,y,z
+    this.light.intensity = 1.25
+    this.light2 = new THREE.PointLight(0xffffff, 1, 100)
+    this.light2.position.set(-10,-10,-10)//x,y,z
+    this.light2.intensity = 1.25
+    this.scene.add(this.light, this.light2)//so the whole cube is illuminated
 
-for(let z =-1; z<=1; z++){
-  for(let y = -1; y<=1; y++){
-    for(let x = -1; x<=1; x++){
-      generateCube(x,y,z)
+    //add camera
+    this.camera = new THREE.PerspectiveCamera(45,this.sizes.width/this.sizes.height, 0.1, 100)
+    this.camera.position.z = 20;
+    this.scene.add(this.camera);
+
+    //renderer
+    this.canvas = document.querySelector('.webgl')
+    this.renderer = new THREE.WebGLRenderer({canvas})
+    this.renderer.setSize(this.sizes.width, this.sizes.height)
+    this.renderer.setPixelRatio(2)
+    this.renderer.render(this.scene, this.camera)
+    this.window.addEventListener("resize", () =>{
+      //update sizes as window size changes
+      this.sizes.width = this.window.innerWidth
+      this.sizes.height = this.window.innerHeight
+      //update camera
+      this.camera.aspect = this.sizes.width/this.sizes.height
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(this.sizes.width, this.sizes.height)
+    })
+    
+    //Controls
+    this.controls = new OrbitControls(this.camera,this.canvas)
+    this.controls.enableDamping = true
+    this.controls.enablePan = false//cant move object around, always centered
+    this.controls.enableZoom = false//no zooming in
+    // this.controls.autoRotate = true
+    // this.controls.autoRotateSpeed = 5 
+  }
+  createFullCube(x,y,z){
+    var cubeGeometry = new THREE.BoxGeometry(0.98,0.98,0.98).toNonIndexed();
+  
+    const positionAttribute = cubeGeometry.getAttribute('position');
+    const colors = [];
+    for(let i =0; i<6; i++){
+      let index = 6;
+      if(i ===0 && x === 1) index = 0;
+      if(i ===1 && x ===-1) index = 1;
+      if(i ===2 && y === 1) index = 2;
+      if(i ===3 && y ===-1) index = 3;
+      if(i ===4 && z === 1) index = 4;
+      if(i ===5 && z ===-1) index = 5;
+      
+      for(let j =0; j<6; j++){
+        colors.push(this.faceColors[index].r,this.faceColors[index].g,this.faceColors[index].b);
+      }
+    }  
+    // define the new attribute
+    cubeGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    var cube = new THREE.Mesh(cubeGeometry,material)
+    cube.position.z = z;
+    cube.position.y = y;
+    cube.position.x = x;
+  
+    this.fullCube.push(cube)
+  }
+  generateCube(){
+    for(let z =-1; z<=1; z++){
+      for(let y = -1; y<=1; y++){
+        for(let x = -1; x<=1; x++){
+          this.createFullCube(x,y,z)
+        }
+      }
+    }
+    for(let i =0; i < this.fullCube.length; i++){
+      this.scene.add(this.fullCube[i]);
     }
   }
+  //z is towards viewer
+  //y is up
+  //x is to the right
+
+  //shape
+
+
+  /*
+    Red: CB0009
+    Orange: FF7400  
+    White: FFFFFF
+    Yellow: FFDD00
+    Green: 00D53A
+    Blue: 1159FF
+  */
+
+
+  /*
+    default cube orientation:
+    green facing up, orange left, white away
+    x is right left
+    y is up down
+    z is towards away from viewer
+  */
+  //function to rotate object, certain degrees
 }
 
-for(let i =0; i < fullCube.length; i++){
-  scene.add(fullCube[i]);
-}
 
 
-//sizes
-const sizes = {
-  width: window.innerWidth,
-  height: window.innerHeight
-}
-
-//light
-const light = new THREE.PointLight(0xffffff, 1, 100)
-light.position.set(10,10,10)//x,y,z
-light.intensity = 1.25
-const light2 = new THREE.PointLight(0xffffff, 1, 100)
-light2.position.set(-10,-10,-10)//x,y,z
-light2.intensity = 1.25
-scene.add(light, light2)//so the whole cube is illuminated
-
-//add camera
-const camera = new THREE.PerspectiveCamera(45,sizes.width/sizes.height, 0.1, 100)
-camera.position.z = 20;
-scene.add(camera);
-
-//renderer
-const canvas = document.querySelector('.webgl')
-const renderer = new THREE.WebGLRenderer({canvas})
-renderer.setSize(sizes.width, sizes.height)
-renderer.setPixelRatio(2)
-renderer.render(scene, camera)
 
 
-window.addEventListener("resize", () =>{
-  //update sizes as window size changes
-  sizes.width = window.innerWidth
-  sizes.height = window.innerHeight
-  //update camera
-  camera.aspect = sizes.width/sizes.height
-  camera.updateProjectionMatrix();
-  renderer.setSize(sizes.width, sizes.height)
-})
 
-//Controls
-const controls = new OrbitControls(camera,canvas)
-controls.enableDamping = true
-controls.enablePan = false//cant move object around, always centered
-controls.enableZoom = false//no zooming in
-// controls.autoRotate = true
-// controls.autoRotateSpeed = 5 
+
+
+
+
+
 
 const loop = () =>{//rerender it, so that the cube is in right position
   controls.update()
