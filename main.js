@@ -1,9 +1,12 @@
 import * as THREE from 'three'
+import Solver from './app'; 
 import "./style.css"
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 import gsap from 'gsap'
 
 const scene = new THREE.Scene()
+const solver = new Solver();
+
 //z is towards viewer
 //y is up
 //x is to the right
@@ -179,8 +182,8 @@ const tl = gsap.timeline({defaults: {duration: 1}})//default time duration is 1 
 // })
 
 //buttons for rotations
-const axesHelper = new THREE.AxesHelper(10);
-scene.add(axesHelper);
+// const axesHelper = new THREE.AxesHelper(10);
+// scene.add(axesHelper);
 
 const xAxis = new THREE.Vector3(1,0,0);//red
 const yAxis = new THREE.Vector3(0,1,0);//green
@@ -205,12 +208,6 @@ document.getElementById("moveU") .addEventListener("click", rotateU,  false);
 document.getElementById("moveUi").addEventListener("click", rotateUi, false);
 document.getElementById("moveD") .addEventListener("click", rotateD,  false);
 document.getElementById("moveDi").addEventListener("click", rotateDi, false);
-document.getElementById("moveM") .addEventListener("click", rotateM,  false);
-document.getElementById("moveMi").addEventListener("click", rotateMi, false);
-document.getElementById("moveE") .addEventListener("click", rotateE,  false);
-document.getElementById("moveEi").addEventListener("click", rotateEi, false);
-document.getElementById("moveS") .addEventListener("click", rotateS,  false);
-document.getElementById("moveSi").addEventListener("click", rotateSi, false);
 
 function executeRotate(axis, angle, coord){//need to add tweening to this or wtv to make it smoother later
   for(let i =0; i<fullCube.length; i++){
@@ -232,58 +229,193 @@ function executeRotate(axis, angle, coord){//need to add tweening to this or wtv
 }
 
 function rotateF(){
+  solver.moveFront(0);
   executeRotate('z',3*Math.PI/2,1);
 }
 function rotateFi(){
+  solver.moveFront(1);
   executeRotate('z',Math.PI/2,1);
 }
 function rotateB(){
+  solver.moveBack(0);
   executeRotate('z',Math.PI/2,-1);
 }
 function rotateBi(){
+  solver.moveBack(1);
   executeRotate('z',3*Math.PI/2,-1);
 }
 function rotateL(){
+  solver.moveLeft(0);
   executeRotate('x',Math.PI/2,-1);
 }
 function rotateLi(){
+  solver.moveLeft(1);
   executeRotate('x',3*Math.PI/2,-1);
 }
 function rotateR(){
+  solver.moveRight(0);
   executeRotate('x',Math.PI/2,1);
 }
 function rotateRi(){
+  solver.moveRight(1);
   executeRotate('x',3*Math.PI/2,1);
 }
 function rotateU(){
+  solver.moveUp(0);
   executeRotate('y',3*Math.PI/2,1);
 }
 function rotateUi(){
+  solver.moveUp(1);
   executeRotate('y',Math.PI/2,1);
 }
 function rotateD(){
+  solver.moveDown(0);
   executeRotate('y',Math.PI/2,-1);
 }
 function rotateDi(){
+  solver.moveDown(1);
   executeRotate('y',3*Math.PI/2,-1);
 }
 // M follows L direction, E follows D direction, S follows F direction
 function rotateM(){
+  solver.moveM(0);
   executeRotate('x',Math.PI/2,0);
 }
 function rotateMi(){
+  solver.moveM(1);
   executeRotate('x',3*Math.PI/2,0);
 }
 function rotateE(){
+  solver.moveE(0);
   executeRotate('y',Math.PI/2,0);
 }
 function rotateEi(){
+  solver.moveE(1);
   executeRotate('y',3*Math.PI/2,0);
 }
 function rotateS(){
+  solver.moveS(0);
   executeRotate('z',3*Math.PI/2,0);
 }
 function rotateSi(){
+  solver.moveS(1);
   executeRotate('z',Math.PI/2,0);
 }
 
+//shuffle and solver
+document.getElementById("shuffle").addEventListener("click", randomShuffle, false);
+document.getElementById("solve").addEventListener("click", solve, false);
+
+function randomShuffle(){
+  var moves = solver.randomScramble();
+  alert("test shuffle");
+  for(let i =0; i<moves.length; i++){
+    var [type,f] = moves[i];//frequency
+    if(f==1){
+      switch(type){
+        case 'U': {
+          rotateU();
+          break;
+        }
+        case 'D':{
+          rotateD();
+          break;
+        }
+        case 'L':{
+          rotateL();
+          break;
+        }
+        case 'R':{
+          rotateR();
+          break;
+        }
+        case 'F':{
+          rotateF();
+          break;
+        }
+        case 'B':{
+          rotateB();
+          break;
+        }
+      }
+    }
+    else if (f==2){
+      switch(type){
+        case 'U': {
+          rotateU();
+          rotateU();
+          break;
+        }
+        case 'D':{
+          rotateD();
+          rotateD();
+          break;
+        }
+        case 'L':{
+          rotateL();
+          rotateL();
+          break;
+        }
+        case 'R':{
+          rotateR();
+          rotateR();
+          break;
+        }
+        case 'F':{
+          rotateF();
+          rotateF();
+          break;
+        }
+        case 'B':{
+          rotateB();
+          rotateB();
+          break;
+        }
+      }
+    }
+    else{
+      switch(type){
+        case 'U': {
+          rotateUi();
+          break;
+        }
+        case 'D':{
+          rotateDi();
+          break;
+        }
+        case 'L':{
+          rotateLi();
+          break;
+        }
+        case 'R':{
+          rotateRi();
+          break;
+        }
+        case 'F':{
+          rotateFi();
+          break;
+        }
+        case 'B':{
+          rotateBi();
+          break;
+        }
+      }
+    }
+  }
+}
+function solve(){
+  var cornerMoves = solver.solveCorners();
+  for(let i =0; i<cornerMoves.length; i++){
+    var letter = cornerMoves[i];
+  }
+  var edgeMoves = solver.solveEdges();
+  //problem rn is thatt we have to orient the pieces, when we are tracing
+  //so might get cucked when we do the visuals here?
+  alert("test solve");
+}
+
+/*
+  wait i think we have it backwards??
+  should be easier to add animation to the BACKEND
+  isntead of adding backend to the front??
+*/
