@@ -1,32 +1,32 @@
 export default class Solver{
     constructor(){
         this.cornerLettering = [['a','b','c','d'], ['e','f','g','h'], ['i','j','k','l'],['m','n','o','p'],['q','r','s','t'],['u','v','w','x']];
-        const lettersToCorner = new Map();
+        this.lettersToCorner = new Map();
         this.edgeLettering = [['a','b','c','d'], ['e','f','g','h'], ['i','j','k','l'],['m','n','o','p'],['q','r','s','t'],['u','v','w','x']];
-        const lettersToEdge = new Map();
+        this.lettersToEdge = new Map();
 
         for(let i =0; i<6; i++){
             for(let j =0; j<4; j++){
-                lettersToCorner.set(String.fromCharCode(97+4*i+j),[i,j]);
-                lettersToEdge.set(String.fromCharCode(97+4*i+j),[i,j]);
+                this.lettersToCorner.set(String.fromCharCode(97+4*i+j),[i,j]);
+                this.lettersToEdge.set(String.fromCharCode(97+4*i+j),[i,j]);
             }
         }
         
         this.seeMoves = 0;
-        const corners = [['a','e','r'], ['b','n','q'], ['c','j','m'], ['d','f','i'], ['u','g','l'], ['v','k','p'], ['w','o','t'],['x','h','s']];
-        const cornerNumbering = new Map();
-        for(let i = 0; i<corners.length; i++){
-            cornerNumbering.set(corners[i][0],i);
-            cornerNumbering.set(corners[i][1],i);
-            cornerNumbering.set(corners[i][2],i);
+        this.corners = [['a','e','r'], ['b','n','q'], ['c','j','m'], ['d','f','i'], ['u','g','l'], ['v','k','p'], ['w','o','t'],['x','h','s']];
+        this.cornerNumbering = new Map();
+        for(let i = 0; i<this.corners.length; i++){
+            this.cornerNumbering.set(this.corners[i][0],i);
+            this.cornerNumbering.set(this.corners[i][1],i);
+            this.cornerNumbering.set(this.corners[i][2],i);
         }
         this.cornersVisited= new Array(8).fill(0);
 
-        const edges = [['a','q'], ['b','m'], ['c','i'],['d','e'],['f','l'],['j','p'],['n','t'],['h','r'],['k','u'],['o','v'],['s','w'],['g','x']];
-        const edgeNumbering = new Map();
-        for(let i = 0; i<edges.length; i++){
-            edgeNumbering.set(edges[i][0],i);
-            edgeNumbering.set(edges[i][1],i);
+        this.edges = [['a','q'], ['b','m'], ['c','i'],['d','e'],['f','l'],['j','p'],['n','t'],['h','r'],['k','u'],['o','v'],['s','w'],['g','x']];
+        this.edgeNumbering = new Map();
+        for(let i = 0; i<this.edges.length; i++){
+            this.edgeNumbering.set(this.edges[i][0],i);
+            this.edgeNumbering.set(this.edges[i][1],i);
         }
         this.edgesVisited= new Array(12).fill(0);
     }    
@@ -40,10 +40,10 @@ export default class Solver{
         let times = 0;
         if(dir == 0) times = 1;
         else if(dir==1) times  = 3;
-        else if(dir == 2) times =2;
+        else if(dir == 2) times = 2;
 
         for(let t =0; t<times; t++){
-            const prev = structuredClone(this.cornerLettering);
+            const prev = structuredClone(this.cornerLettering);//issue is here maybe??
             const prevEdge = structuredClone(this.edgeLettering);
             
             for(let i =0; i<4; i++){
@@ -164,18 +164,17 @@ export default class Solver{
         else if(dir == 2) times =2;
         
         for(let t =0; t<times; t++){
-            const prevEdge = structuredClone(edgeLettering);
+            const prevEdge = structuredClone(this.edgeLettering);
 
             let sides = [0,2,5,4];
             let pp1 = [0,0,0,2];
             let pp2 = [2,2,2,0];
 
             for(let i = 0; i<4; i++){
-                edgeLettering[sides[i]][pp1[i]] = prevEdge[sides[(i+3)%4]][pp1[(i+3)%4]];            
-                edgeLettering[sides[i]][pp2[i]] = prevEdge[sides[(i+3)%4]][pp2[(i+3)%4]];            
+                this.edgeLettering[sides[i]][pp1[i]] = prevEdge[sides[(i+3)%4]][pp1[(i+3)%4]];            
+                this.edgeLettering[sides[i]][pp2[i]] = prevEdge[sides[(i+3)%4]][pp2[(i+3)%4]];            
             }
         }
-        if(seeMoves)  console.log("M " + times);
     }
     moveE(dir){
         let times = 0;
@@ -184,18 +183,17 @@ export default class Solver{
         else if(dir == 2) times =2;
         
         for(let t =0; t<times; t++){
-            const prevEdge = structuredClone(edgeLettering);
+            const prevEdge = structuredClone(this.edgeLettering);
 
             let sides = [1,2,3,4];
             let pp1 = [1,1,1,1];
             let pp2 = [3,3,3,3];
 
             for(let i = 0; i<4; i++){
-                edgeLettering[sides[i]][pp1[i]] = prevEdge[sides[(i+3)%4]][pp1[(i+3)%4]];            
-                edgeLettering[sides[i]][pp2[i]] = prevEdge[sides[(i+3)%4]][pp2[(i+3)%4]];            
+                this.edgeLettering[sides[i]][pp1[i]] = prevEdge[sides[(i+3)%4]][pp1[(i+3)%4]];            
+                this.edgeLettering[sides[i]][pp2[i]] = prevEdge[sides[(i+3)%4]][pp2[(i+3)%4]];            
             }
         }
-        if(seeMoves) console.log("E " + times);
     }
     moveS(dir){
         let times = 0;
@@ -204,18 +202,17 @@ export default class Solver{
         else if(dir == 2) times =2;
         
         for(let t =0; t<times; t++){
-            const prevEdge = structuredClone(edgeLettering);
+            const prevEdge = structuredClone(this.edgeLettering);
 
             let sides = [0,3,5,1];
             let pp1 = [3,0,1,2];
             let pp2 = [1,2,3,0];
 
             for(let i = 0; i<4; i++){
-                edgeLettering[sides[i]][pp1[i]] = prevEdge[sides[(i+3)%4]][pp1[(i+3)%4]];            
-                edgeLettering[sides[i]][pp2[i]] = prevEdge[sides[(i+3)%4]][pp2[(i+3)%4]];            
+                this.edgeLettering[sides[i]][pp1[i]] = prevEdge[sides[(i+3)%4]][pp1[(i+3)%4]];            
+                this.edgeLettering[sides[i]][pp2[i]] = prevEdge[sides[(i+3)%4]][pp2[(i+3)%4]];            
             }
         }
-        if(seeMoves) console.log("S " + times);
     }
 
 
@@ -354,7 +351,7 @@ export default class Solver{
                 this.moveDown(2);
                 break;
         }
-        cornerSwap();
+        this.cornerSwap();
         switch(letter){
             case 'b':
                 this.moveRight(2);
@@ -580,22 +577,21 @@ export default class Solver{
     }
     
     checkCornerVis(cur){
-        return this.cornersVisited[cornerNumbering.get(this.cornerLettering[cur[0]][cur[1]])];
+        return this.cornersVisited[this.cornerNumbering.get(this.cornerLettering[cur[0]][cur[1]])];
     }
     isBufferPieceCorner(cur){
-        return (cornerNumbering.get(this.cornerLettering[cur[0]][cur[1]]) == 0);
+        return (this.cornerNumbering.get(this.cornerLettering[cur[0]][cur[1]]) == 0);
     }
     markCornerVisited(cur){
-        this.cornersVisited[cornerNumbering.get(this.cornerLettering[cur[0]][cur[1]])] = 1;
+        this.cornersVisited[this.cornerNumbering.get(this.cornerLettering[cur[0]][cur[1]])] = 1;
     }
     cornerTrace(){ //.push() to add elements to end of array
         //need to mark already solved pieces as visited
-        var prevCornerLetter = structuredClone(this.cornerLettering);
-        var prevEdgeLetter = structuredClone(this.edgeLettering);
-
+        var prevEdgeLettering = structuredClone(this.edgeLettering);
+        var prevCornerLettering = structuredClone(this.cornerLettering);
         for(let i = 0; i < 6; i++){
             for(let j = 0; j < 4; j++){
-                if(lettersToCorner.get(this.cornerLettering[i][j]).toString() === [i,j].toString()){//cant compare arrays like this directly
+                if(this.lettersToCorner.get(this.cornerLettering[i][j]).toString() === [i,j].toString()){//cant compare arrays like this directly
                     // console.log([i,j]);
                     this.markCornerVisited([i,j]);
                 }
@@ -624,32 +620,37 @@ export default class Solver{
                     break;//we solved all pieces
                 }
             }
-            moveSequence.push(cornerLettering[cur[0]][cur[1]]);
+            moveSequence.push(this.cornerLettering[cur[0]][cur[1]]);
             this.markCornerVisited(cur);
-            this.orientCorner(cornerLettering[cur[0]][cur[1]]);//where its supposed to go
+            this.orientCorner(this.cornerLettering[cur[0]][cur[1]]);//where its supposed to go
         }
-        // console.log("finished corners");
-        this.cornerLettering = prevCornerLetter;
-        this.edgeLettering = prevEdgeLetter;
+        console.log("finished corners");
+        for(let i = 0; i < 6; i++){
+            for(let j = 0; j < 4; j++){
+                this.edgeLettering[i][j] = prevEdgeLettering[i][j];
+                this.cornerLettering[i][j] = prevCornerLettering[i][j];
+            }
+        }
         return moveSequence;    
     }
-
-    
-
     checkEdgeVis(cur){
-        return this.edgesVisited[edgeNumbering.get(this.edgeLettering[cur[0]][cur[1]])];
+        return this.edgesVisited[this.edgeNumbering.get(this.edgeLettering[cur[0]][cur[1]])];
     }
     isBufferPieceEdge(cur){
-        return (edgeNumbering.get(this.edgeLettering[cur[0]][cur[1]]) == 1);
+        return (this.edgeNumbering.get(this.edgeLettering[cur[0]][cur[1]]) == 1);
     }
     markEdgeVisited(cur){
-        this.edgesVisited[edgeNumbering.get(this.edgeLettering[cur[0]][cur[1]])] = 1;
+        this.edgesVisited[this.edgeNumbering.get(this.edgeLettering[cur[0]][cur[1]])] = 1;
     }
     edgeTrace(){ //.push() to add elements to end of array
         //need to mark already solved pieces as visited
+        
+        var prevEdgeLettering = structuredClone(this.edgeLettering);
+        var prevCornerLettering = structuredClone(this.cornerLettering);
+
         for(let i = 0; i < 6; i++){
             for(let j = 0; j < 4; j++){
-                if(lettersToEdge.get(this.edgeLettering[i][j]).toString() === [i,j].toString()){//cant compare arrays like this directly
+                if(this.lettersToEdge.get(this.edgeLettering[i][j]).toString() === [i,j].toString()){//cant compare arrays like this directly
                     // console.log([i,j]);
                     this.markEdgeVisited([i,j]);
                 }
@@ -682,39 +683,45 @@ export default class Solver{
             this.markEdgeVisited(cur);
             this.orientEdge(this.edgeLettering[cur[0]][cur[1]]);//where its supposed to go
         }
-        // console.log("finished edges");
+        console.log("finished edges");
+        for(let i = 0; i < 6; i++){
+            for(let j = 0; j < 4; j++){
+                this.edgeLettering[i][j] = prevEdgeLettering[i][j];
+                this.cornerLettering[i][j] = prevCornerLettering[i][j];
+            }
+        }
         return moveSequence;    
     }
     solveCorners(){
-        moveSequence = cornerTrace();
+        var moveSequence = this.cornerTrace();
         // console.log(moveSequence);
         return moveSequence;
     }
     solveEdges(){
-        moveSequence = edgeTrace();
+        var moveSequence = this.edgeTrace();
         // console.log(moveSequence);
         return moveSequence;
     }
     testDebugger(){
         var problem =0;
-        if(0){
-            for(let t =0; t<100000 && !problem; t++){    
-                let moves = randomScramble();
+        if(1){
+            for(let t =0; t<10000 && !problem; t++){    
+                let moves = this.randomScramble();
                 //need to reset everything LOL
-                edgesVisited.fill(0);
-                cornersVisited.fill(0);
+                this.edgesVisited.fill(0);
+                this.cornersVisited.fill(0);
     
-                solveCorners();
-                solveEdges();
+                this.solveCorners();
+                this.solveEdges();
                 for(let i =0; i<6 && !problem; i++){
                     for(let j =0; j<4 && !problem; j++){
-                        if(cornerLettering[i][j]!=String.fromCharCode(97+4*i+j)){
+                        if(this.cornerLettering[i][j]!=String.fromCharCode(97+4*i+j)){
                             console.log("problem!!");
                             console.log(moves);
                             problem = 1;
                             break;
                         }
-                        if(edgeLettering[i][j]!=String.fromCharCode(97+4*i+j)){
+                        if(this.edgeLettering[i][j]!=String.fromCharCode(97+4*i+j)){
                             console.log("problem!!");
                             console.log(moves);
                             problem = 1;
@@ -723,8 +730,8 @@ export default class Solver{
                     }
                 }
                 if(problem){
-                    console.log(cornerLettering);
-                    console.log(edgeLettering);
+                    console.log(this.cornerLettering);
+                    console.log(this.edgeLettering);
                 }
             }
         }
@@ -771,4 +778,8 @@ export default class Solver{
         return moves;
     }
 }
+const solver = new Solver();
+
+solver.testDebugger();
+
 export {Solver};
