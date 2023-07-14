@@ -3,6 +3,7 @@ import Solver from './app';
 import "./style.css"
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 import gsap from 'gsap'
+import TWEEN from '@tweenjs/tween.js'
 
 const scene = new THREE.Scene()
 const solver = new Solver();
@@ -148,6 +149,7 @@ controls.enableZoom = false//no zooming in
 const loop = () =>{//rerender it, so that the cube is in right position
   controls.update()
   renderer.render(scene, camera)
+  TWEEN.update();
   window.requestAnimationFrame(loop)
 }
 loop()
@@ -209,116 +211,217 @@ document.getElementById("moveUi").addEventListener("click", rotateUi, false);
 document.getElementById("moveD") .addEventListener("click", rotateD,  false);
 document.getElementById("moveDi").addEventListener("click", rotateDi, false);
 
-function executeRotate(axis, angle, coord){//need to add tweening to this or wtv to make it smoother later
+/*
+  rn all the moves are execing at once, so thats why it gets fucked up
+    like we are execing, in the middle of rotation
+*/
+/*
+  just get last move time?
+  //last time + 500
+    doesnt work, cuz what if there is a large delay in move times
+    only works if we spam click
+
+  ALTERNATIVELY
+    when a button is pressed, make it so that not other button can be pressed?
+    then, for the shuffle and solve methods we use the moveCount method
+  sleep?
+*/
+function sleep(ms) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve('resolved');
+    }, ms);
+  });
+}
+var speed = 150;
+
+
+function tweenMove(cube, axis, angle){
+  const start = { rotation: 0 };
+  const prev = { rotation: 0 };
+  const end = { rotation: angle};
+  const tween = new TWEEN.Tween(start)
+    .to(end, speed)
+    .easing(TWEEN.Easing.Quadratic.InOut)
+    .onUpdate(({ rotation }) => {
+      cube.position.applyAxisAngle(axis, rotation - prev.rotation);
+      cube.rotateOnWorldAxis(axis, rotation - prev.rotation);
+      prev.rotation = rotation;
+    });
+    tween.start();
+}
+
+
+function executeRotate(axis, angle, coord){
   for(let i =0; i<fullCube.length; i++){
     if(checkCoordSame(fullCube[i],coord,axis)){
       if(axis == 'x'){
-        fullCube[i].position.applyAxisAngle(xAxis,angle);
-        fullCube[i].rotateOnWorldAxis(xAxis,angle);
+        tweenMove(fullCube[i],xAxis,angle);
       }
       if(axis == 'y'){
-        fullCube[i].position.applyAxisAngle(yAxis,angle);
-        fullCube[i].rotateOnWorldAxis(yAxis,angle);
+        tweenMove(fullCube[i],yAxis,angle);
       }
       if(axis == 'z'){
-        fullCube[i].position.applyAxisAngle(zAxis,angle);
-        fullCube[i].rotateOnWorldAxis(zAxis,angle);
+        tweenMove(fullCube[i],zAxis,angle);
       }
     }
   }
-  // console.log(solver.cornerLettering);
 }
+//cant create another function just for the purpose of stalling, cuz itll exec the other one
+/*
+  here is the issue:
+    i think what we need to do, is create a queue of all the moves that need to get processed
+    then animate through the queue?
+    cuz rn if a lot of queries are processed at once, they timeout tgt, instead of one after the other
 
+    what if we have a moveCounter * 500?
+      we just need times between any adjancent move swaps to be > 
+    
+      sleep dont work either
+        its because we are processing all the moves at once no?
+        so theyre sleeping at the same time
+    
+    shuffle and solve, we use the move counter idea
+
+    i think the problem is that all the functions are called synchronously
+    cuz i think for the 'shuffle' 'solve', i can have a move counter for settimeout n itll work
+    so itll be like
+    i click a button
+    disables the rest
+    setTimeout, n then reenable all?
+
+
+*/
+var isSolve = 0;
+var moveCount = 0;
 function rotateF(){
   solver.moveFront(0);
   console.log("F");
-  executeRotate('z',3*Math.PI/2,1);
+  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'z',-Math.PI/2,1);
+  else executeRotate('z',-Math.PI/2,1);
+  moveCount++;
+  console.log(moveCount);
 }
 function rotateFi(){
   solver.moveFront(1);
   console.log("Fi");
-  executeRotate('z',Math.PI/2,1);
+  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'z',Math.PI/2,1);
+  else executeRotate('z',Math.PI/2,1);
+  moveCount++;
+  console.log(moveCount);
 }
 function rotateB(){
   solver.moveBack(0);
   console.log("B");
-  executeRotate('z',Math.PI/2,-1);
+  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'z',Math.PI/2,-1);
+  else executeRotate('z',Math.PI/2,-1);
+  moveCount++;
+  console.log(moveCount);
 }
 function rotateBi(){
   solver.moveBack(1);
   console.log("Bi");
-  executeRotate('z',3*Math.PI/2,-1);
+  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'z',-Math.PI/2,-1);
+  else executeRotate('z',-Math.PI/2,-1);
+  moveCount++;
+  console.log(moveCount);
 }
 function rotateL(){
   solver.moveLeft(0);
   console.log("L");
-  executeRotate('x',Math.PI/2,-1);
+  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'x',Math.PI/2,-1);
+  else executeRotate('x',Math.PI/2,-1);
+  moveCount++;
+  console.log(moveCount);
 }
 function rotateLi(){
   solver.moveLeft(1);
   console.log("Li");
-  executeRotate('x',3*Math.PI/2,-1);
+  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'x',-Math.PI/2,-1);
+  else executeRotate('x',-Math.PI/2,-1);
+  moveCount++;
+  console.log(moveCount);
 }
 function rotateR(){
   solver.moveRight(0);
   console.log("R");
-  executeRotate('x',3*Math.PI/2,1);
+  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'x',-Math.PI/2,1);
+  else executeRotate('x',-Math.PI/2,1);
+  moveCount++;
+  console.log(moveCount);
 }
 function rotateRi(){
   solver.moveRight(1);
   console.log("Ri");
-  executeRotate('x',Math.PI/2,1);
+  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'x',Math.PI/2,1);
+  else executeRotate('x',Math.PI/2,1);
+  moveCount++;
+  console.log(moveCount);
 }
 function rotateU(){
   solver.moveUp(0);
   console.log("U");
-  executeRotate('y',3*Math.PI/2,1);
+  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'y',-Math.PI/2,1);
+  else executeRotate('y',-Math.PI/2,1);
+  moveCount++;
+  console.log(moveCount);
 }
 function rotateUi(){
   solver.moveUp(1);
   console.log("Ui");
-  executeRotate('y',Math.PI/2,1);
+  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'y',Math.PI/2,1);
+  else executeRotate('y',Math.PI/2,1);
+  moveCount++;
+  console.log(moveCount);
 }
 function rotateD(){
   solver.moveDown(0);
   console.log("D");
-  executeRotate('y',Math.PI/2,-1);
+  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'y',Math.PI/2,-1);
+  else executeRotate('y',Math.PI/2,-1);
+  moveCount++;
+  console.log(moveCount);
 }
 function rotateDi(){
   solver.moveDown(1);
   console.log("Di");
-  executeRotate('y',3*Math.PI/2,-1);
+  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'y',-Math.PI/2,-1);
+  else executeRotate('y',-Math.PI/2,-1);
+  moveCount++;
+  console.log(moveCount);
 }
-// M follows L direction, E follows D direction, S follows F direction
+// M follows L direction,  E follows D direction, S follows F direction
 function rotateM(){
   solver.moveM(0);
   console.log("M");
-  executeRotate('x',Math.PI/2,0);
+  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'x',Math.PI/2,0);
+  else executeRotate('x',Math.PI/2,0);
+  moveCount++;
+  console.log(moveCount);
 }
 function rotateMi(){
   solver.moveM(1);
   console.log("Mi");
-  executeRotate('x',3*Math.PI/2,0);
+  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'x',-Math.PI/2,0);
+  else executeRotate('x',-Math.PI/2,0);
+  moveCount++;
+  console.log(moveCount);
 }
 function rotateE(){
   solver.moveE(0);
   console.log("E");
-  executeRotate('y',Math.PI/2,0);
+  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'y',Math.PI/2,0);
+  else executeRotate('y',Math.PI/2,0);
+  moveCount++;
+  console.log(moveCount);
 }
 function rotateEi(){
   solver.moveE(1);
   console.log("Ei");
-  executeRotate('y',3*Math.PI/2,0);
-}
-function rotateS(){
-  solver.moveS(0);
-  console.log("S");
-  executeRotate('z',3*Math.PI/2,0);
-}
-function rotateSi(){
-  solver.moveS(1);
-  console.log("Si");
-  executeRotate('z',Math.PI/2,0);
+  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'y',-Math.PI/2,0);
+  else executeRotate('y',-Math.PI/2,0);
+  moveCount++;
+  console.log(moveCount);
 }
 
 //shuffle and solver
@@ -331,27 +434,27 @@ function randomShuffle(){
     if(f==0){
       switch(type){
         case 'U': {
-          rotateU();
+          setTimeout(rotateU,i*speed*1.1);
           break;
         }
         case 'D':{
-          rotateD();
+          setTimeout(rotateD,i*speed*1.1);
           break;
         }
         case 'L':{
-          rotateL();
+          setTimeout(rotateL,i*speed*1.1);
           break;
         }
         case 'R':{
-          rotateR();
+          setTimeout(rotateR,i*speed*1.1);
           break;
         }
         case 'F':{
-          rotateF();
+          setTimeout(rotateF,i*speed*1.1);
           break;
         }
         case 'B':{
-          rotateB();
+          setTimeout(rotateB,i*speed*1.1);
           break;
         }
       }
@@ -359,33 +462,33 @@ function randomShuffle(){
     else if (f==2){
       switch(type){
         case 'U': {
-          rotateU();
-          rotateU();
+          setTimeout(rotateU,i*speed*1.1);
+          setTimeout(rotateU,i*speed*1.1);
           break;
         }
         case 'D':{
-          rotateD();
-          rotateD();
+          setTimeout(rotateD,i*speed*1.1);
+          setTimeout(rotateD,i*speed*1.1);
           break;
         }
         case 'L':{
-          rotateL();
-          rotateL();
+          setTimeout(rotateL,i*speed*1.1);
+          setTimeout(rotateL,i*speed*1.1);
           break;
         }
         case 'R':{
-          rotateR();
-          rotateR();
+          setTimeout(rotateR,i*speed*1.1);
+          setTimeout(rotateR,i*speed*1.1);
           break;
         }
         case 'F':{
-          rotateF();
-          rotateF();
+          setTimeout(rotateF,i*speed*1.1);
+          setTimeout(rotateF,i*speed*1.1);
           break;
         }
         case 'B':{
-          rotateB();
-          rotateB();
+          setTimeout(rotateB,i*speed*1.1);
+          setTimeout(rotateB,i*speed*1.1);
           break;
         }
       }
@@ -393,27 +496,27 @@ function randomShuffle(){
     else{
       switch(type){
         case 'U': {
-          rotateUi();
+          setTimeout(rotateUi,i*speed*1.1);
           break;
         }
         case 'D':{
-          rotateDi();
+          setTimeout(rotateDi,i*speed*1.1);
           break;
         }
         case 'L':{
-          rotateLi();
+          setTimeout(rotateLi,i*speed*1.1);
           break;
         }
         case 'R':{
-          rotateRi();
+          setTimeout(rotateRi,i*speed*1.1);
           break;
         }
         case 'F':{
-          rotateFi();
+          setTimeout(rotateFi,i*speed*1.1);
           break;
         }
         case 'B':{
-          rotateBi();
+          setTimeout(rotateBi,i*speed*1.1);
           break;
         }
       }
@@ -822,9 +925,10 @@ function orientEdge(letter){
 function solve(){
   solver.cornersVisited.fill(0);
   solver.edgesVisited.fill(0);
-  console.log(solver.cornerLettering);//appears that its resetting, even after the scramble
   var cornerMoves = solver.solveCorners();
-  console.log(solver.cornerLettering);
+  moveCount = 1;
+  isSolve = 1;
+
   for(let i =0; i<cornerMoves.length; i++){
     var letter = cornerMoves[i];
     orientCorner(letter);
@@ -835,14 +939,17 @@ function solve(){
     var letter = edgeMoves[i];
     orientEdge(letter);
   }
-  //problem rn is thatt we have to orient the pieces, when we are tracing
-  //so might get cucked when we do the visuals here?
-  console.log(cornerMoves);
-  // console.log(edgeMoves);
-  alert("test solve");
+  isSolve = 0;
 }
 // rotateR();
 // cornerSwap();
 //dont just assume something is right
 //acc check that its right
 //walk through each step, break it down to basic components
+
+
+/*
+  rn moves are kinda ugly
+    if two adjacent moves cancel each other out, get rid of them
+  
+*/
