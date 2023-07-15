@@ -292,136 +292,202 @@ function executeRotate(axis, angle, coord){
 
 
 */
-var isSolve = 0;
+function enableAllButtons(){
+  document.getElementById("moveF").disabled = false;
+  document.getElementById("moveFi").disabled = false;
+  document.getElementById("moveB").disabled = false;
+  document.getElementById("moveBi").disabled = false;
+  document.getElementById("moveL").disabled = false;
+  document.getElementById("moveLi").disabled = false;
+  document.getElementById("moveR").disabled = false;
+  document.getElementById("moveRi").disabled = false;
+  document.getElementById("moveU").disabled = false;
+  document.getElementById("moveUi").disabled = false;
+  document.getElementById("moveD").disabled = false;
+  document.getElementById("moveDi").disabled = false;
+  document.getElementById("shuffle").disabled = false;
+  document.getElementById("solve").disabled = false;
+}
+function disableAllButtons(time){
+  document.getElementById("moveF").disabled = true;
+  document.getElementById("moveFi").disabled = true;
+  document.getElementById("moveB").disabled = true;
+  document.getElementById("moveBi").disabled = true;
+  document.getElementById("moveL").disabled = true;
+  document.getElementById("moveLi").disabled = true;
+  document.getElementById("moveR").disabled = true;
+  document.getElementById("moveRi").disabled = true;
+  document.getElementById("moveU").disabled = true;
+  document.getElementById("moveUi").disabled = true;
+  document.getElementById("moveD").disabled = true;
+  document.getElementById("moveDi").disabled = true;
+  document.getElementById("shuffle").disabled = true;
+  document.getElementById("solve").disabled = true;
+  setTimeout(enableAllButtons,time);
+}
+
+var isBig = 0;
 var moveCount = 0;
 function rotateF(){
   solver.moveFront(0);
   console.log("F");
-  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'z',-Math.PI/2,1);
-  else executeRotate('z',-Math.PI/2,1);
+  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'z',-Math.PI/2,1);
+  else{
+    setTimeout(executeRotate,speed*1.1,'z',-Math.PI/2,1);
+    disableAllButtons(speed*1.1);
+  }
   moveCount++;
-  console.log(moveCount);
 }
 function rotateFi(){
   solver.moveFront(1);
   console.log("Fi");
-  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'z',Math.PI/2,1);
-  else executeRotate('z',Math.PI/2,1);
+  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'z',Math.PI/2,1);
+  else{
+    setTimeout(executeRotate,speed*1.1,'z',Math.PI/2,1);
+    disableAllButtons(speed*1.1);
+  }
   moveCount++;
-  console.log(moveCount);
 }
 function rotateB(){
   solver.moveBack(0);
   console.log("B");
-  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'z',Math.PI/2,-1);
-  else executeRotate('z',Math.PI/2,-1);
+  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'z',Math.PI/2,-1);
+  else{
+    setTimeout(executeRotate,speed*1.1,'z',Math.PI/2,-1);
+    disableAllButtons(speed*1.1);
+  }
   moveCount++;
-  console.log(moveCount);
 }
 function rotateBi(){
   solver.moveBack(1);
   console.log("Bi");
-  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'z',-Math.PI/2,-1);
-  else executeRotate('z',-Math.PI/2,-1);
+  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'z',-Math.PI/2,-1);
+  else{
+    setTimeout(executeRotate,speed*1.1,'z',-Math.PI/2,-1);
+    disableAllButtons(speed*1.1);
+  }
   moveCount++;
-  console.log(moveCount);
 }
 function rotateL(){
   solver.moveLeft(0);
   console.log("L");
-  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'x',Math.PI/2,-1);
-  else executeRotate('x',Math.PI/2,-1);
+  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',Math.PI/2,-1);
+  else{
+    setTimeout(executeRotate,speed*1.1,'x',Math.PI/2,-1);
+    disableAllButtons(speed*1.1);
+  }
   moveCount++;
-  console.log(moveCount);
 }
 function rotateLi(){
   solver.moveLeft(1);
   console.log("Li");
-  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'x',-Math.PI/2,-1);
-  else executeRotate('x',-Math.PI/2,-1);
+  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',-Math.PI/2,-1);
+  else{
+    setTimeout(executeRotate,speed*1.1,'x',-Math.PI/2,-1);
+    disableAllButtons(speed*1.1);
+  }
   moveCount++;
-  console.log(moveCount);
 }
 function rotateR(){
   solver.moveRight(0);
   console.log("R");
-  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'x',-Math.PI/2,1);
-  else executeRotate('x',-Math.PI/2,1);
+  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',-Math.PI/2,1);
+  else{
+    setTimeout(executeRotate,speed*1.1,'x',-Math.PI/2,1);
+    disableAllButtons(speed*1.1);
+  }
   moveCount++;
-  console.log(moveCount);
 }
 function rotateRi(){
   solver.moveRight(1);
   console.log("Ri");
-  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'x',Math.PI/2,1);
-  else executeRotate('x',Math.PI/2,1);
+  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',Math.PI/2,1);
+  else{
+    setTimeout(executeRotate,speed*1.1,'x',Math.PI/2,1);
+    disableAllButtons(speed*1.1);
+  }
   moveCount++;
-  console.log(moveCount);
 }
 function rotateU(){
   solver.moveUp(0);
   console.log("U");
-  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'y',-Math.PI/2,1);
-  else executeRotate('y',-Math.PI/2,1);
+  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',-Math.PI/2,1);
+  else{
+    setTimeout(executeRotate,speed*1.1,'y',-Math.PI/2,1);
+    disableAllButtons(speed*1.1);
+  }
   moveCount++;
-  console.log(moveCount);
 }
 function rotateUi(){
   solver.moveUp(1);
   console.log("Ui");
-  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'y',Math.PI/2,1);
-  else executeRotate('y',Math.PI/2,1);
+  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',Math.PI/2,1);
+  else{
+    setTimeout(executeRotate,speed*1.1,'y',Math.PI/2,1);
+    disableAllButtons(speed*1.1);
+  }
   moveCount++;
-  console.log(moveCount);
 }
 function rotateD(){
   solver.moveDown(0);
   console.log("D");
-  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'y',Math.PI/2,-1);
-  else executeRotate('y',Math.PI/2,-1);
+  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',Math.PI/2,-1);
+  else{
+    setTimeout(executeRotate,speed*1.1,'y',Math.PI/2,-1);
+    disableAllButtons(speed*1.1);
+  }
   moveCount++;
-  console.log(moveCount);
 }
 function rotateDi(){
   solver.moveDown(1);
   console.log("Di");
-  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'y',-Math.PI/2,-1);
-  else executeRotate('y',-Math.PI/2,-1);
+  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',-Math.PI/2,-1);
+  else{
+    setTimeout(executeRotate,speed*1.1,'y',-Math.PI/2,-1);
+    disableAllButtons(speed*1.1);
+  }
   moveCount++;
-  console.log(moveCount);
 }
 // M follows L direction,  E follows D direction, S follows F direction
 function rotateM(){
   solver.moveM(0);
   console.log("M");
-  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'x',Math.PI/2,0);
-  else executeRotate('x',Math.PI/2,0);
+  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',Math.PI/2,0);
+  else{
+    setTimeout(executeRotate,speed*1.1,'x',Math.PI/2,0);
+    disableAllButtons(speed*1.1);
+  }
   moveCount++;
-  console.log(moveCount);
 }
 function rotateMi(){
   solver.moveM(1);
   console.log("Mi");
-  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'x',-Math.PI/2,0);
-  else executeRotate('x',-Math.PI/2,0);
+  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',-Math.PI/2,0);
+  else{
+    setTimeout(executeRotate,speed*1.1,'x',-Math.PI/2,0);
+    disableAllButtons(speed*1.1);
+  }
   moveCount++;
-  console.log(moveCount);
 }
 function rotateE(){
   solver.moveE(0);
   console.log("E");
-  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'y',Math.PI/2,0);
-  else executeRotate('y',Math.PI/2,0);
+  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',Math.PI/2,0);
+  else{
+    setTimeout(executeRotate,speed*1.1,'y',Math.PI/2,0);
+    disableAllButtons(speed*1.1);
+  }
   moveCount++;
-  console.log(moveCount);
 }
 function rotateEi(){
   solver.moveE(1);
   console.log("Ei");
-  if(isSolve) setTimeout(executeRotate,moveCount*speed*1.1,'y',-Math.PI/2,0);
-  else executeRotate('y',-Math.PI/2,0);
+  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',-Math.PI/2,0);
+  else{
+    setTimeout(executeRotate,speed*1.1,'y',-Math.PI/2,0);
+    disableAllButtons(speed*1.1);
+  }
   moveCount++;
-  console.log(moveCount);
 }
 
 //shuffle and solver
@@ -429,32 +495,34 @@ document.getElementById("shuffle").addEventListener("click", randomShuffle, fals
 document.getElementById("solve").addEventListener("click", solve, false);
 function randomShuffle(){
   var moves = solver.randomScramble();
+  moveCount = 1;
+  isBig = 1;
   for(let i =0; i<moves.length; i++){
     var [type,f] = moves[i];//frequency
     if(f==0){
       switch(type){
         case 'U': {
-          setTimeout(rotateU,i*speed*1.1);
+          rotateU();
           break;
         }
         case 'D':{
-          setTimeout(rotateD,i*speed*1.1);
+          rotateD();
           break;
         }
         case 'L':{
-          setTimeout(rotateL,i*speed*1.1);
+          rotateL();
           break;
         }
         case 'R':{
-          setTimeout(rotateR,i*speed*1.1);
+          rotateR();
           break;
         }
         case 'F':{
-          setTimeout(rotateF,i*speed*1.1);
+          rotateF();
           break;
         }
         case 'B':{
-          setTimeout(rotateB,i*speed*1.1);
+          rotateB();
           break;
         }
       }
@@ -462,33 +530,33 @@ function randomShuffle(){
     else if (f==2){
       switch(type){
         case 'U': {
-          setTimeout(rotateU,i*speed*1.1);
-          setTimeout(rotateU,i*speed*1.1);
+          rotateU();
+          rotateU();
           break;
         }
         case 'D':{
-          setTimeout(rotateD,i*speed*1.1);
-          setTimeout(rotateD,i*speed*1.1);
+          rotateD();
+          rotateD();
           break;
         }
         case 'L':{
-          setTimeout(rotateL,i*speed*1.1);
-          setTimeout(rotateL,i*speed*1.1);
+          rotateL();
+          rotateL();
           break;
         }
         case 'R':{
-          setTimeout(rotateR,i*speed*1.1);
-          setTimeout(rotateR,i*speed*1.1);
+          rotateR();
+          rotateR();
           break;
         }
         case 'F':{
-          setTimeout(rotateF,i*speed*1.1);
-          setTimeout(rotateF,i*speed*1.1);
+          rotateF();
+          rotateF();
           break;
         }
         case 'B':{
-          setTimeout(rotateB,i*speed*1.1);
-          setTimeout(rotateB,i*speed*1.1);
+          rotateB();
+          rotateB();
           break;
         }
       }
@@ -496,32 +564,34 @@ function randomShuffle(){
     else{
       switch(type){
         case 'U': {
-          setTimeout(rotateUi,i*speed*1.1);
+          rotateUi();
           break;
         }
         case 'D':{
-          setTimeout(rotateDi,i*speed*1.1);
+          rotateDi();
           break;
         }
         case 'L':{
-          setTimeout(rotateLi,i*speed*1.1);
+          rotateLi();
           break;
         }
         case 'R':{
-          setTimeout(rotateRi,i*speed*1.1);
+          rotateRi();
           break;
         }
         case 'F':{
-          setTimeout(rotateFi,i*speed*1.1);
+          rotateFi();
           break;
         }
         case 'B':{
-          setTimeout(rotateBi,i*speed*1.1);
+          rotateBi();
           break;
         }
       }
     }
   }
+  disableAllButtons(moveCount*speed*1.1);
+  isBig = 0;
 }
 function cornerSwap(){
   rotateR();
@@ -927,29 +997,48 @@ function solve(){
   solver.edgesVisited.fill(0);
   var cornerMoves = solver.solveCorners();
   moveCount = 1;
-  isSolve = 1;
-
+  isBig = 1;
   for(let i =0; i<cornerMoves.length; i++){
     var letter = cornerMoves[i];
     orientCorner(letter);
   }
-  console.log(solver.cornerLettering);
   var edgeMoves = solver.solveEdges();
   for(let i =0; i<edgeMoves.length; i++){
     var letter = edgeMoves[i];
     orientEdge(letter);
   }
-  isSolve = 0;
+  disableAllButtons(moveCount*speed*1.1);
+  isBig = 0;
 }
-// rotateR();
-// cornerSwap();
-//dont just assume something is right
-//acc check that its right
-//walk through each step, break it down to basic components
-
 
 /*
   rn moves are kinda ugly
     if two adjacent moves cancel each other out, get rid of them
   
 */
+document.getElementById("godSolve").addEventListener("click", apiTest, false);
+
+const url = 'http://localhost:5173/api';
+const data = {
+  cornerLettering: solver.cornerLettering,
+  edgeLettering: solver.edgeLettering
+};
+function apiTest(){
+  fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+    .then(response => response.json())
+    .then(responseData => {
+      // Process the response data
+      console.log(responseData);
+    })
+    .catch(error => {
+      // Handle any errors
+      console.error('Error:', error.message);
+    });
+}
+
