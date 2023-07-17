@@ -307,6 +307,7 @@ function enableAllButtons(){
   document.getElementById("moveDi").disabled = false;
   document.getElementById("shuffle").disabled = false;
   document.getElementById("solve").disabled = false;
+  document.getElementById("godSolve").disabled = false;
 }
 function disableAllButtons(time){
   document.getElementById("moveF").disabled = true;
@@ -323,6 +324,7 @@ function disableAllButtons(time){
   document.getElementById("moveDi").disabled = true;
   document.getElementById("shuffle").disabled = true;
   document.getElementById("solve").disabled = true;
+  document.getElementById("godSolve").disabled = true;
   setTimeout(enableAllButtons,time);
 }
 
@@ -1011,34 +1013,167 @@ function solve(){
   isBig = 0;
 }
 
-/*
-  rn moves are kinda ugly
-    if two adjacent moves cancel each other out, get rid of them
-  
-*/
 document.getElementById("godSolve").addEventListener("click", apiTest, false);
 
-const url = 'http://localhost:5173/api';
-const data = {
-  cornerLettering: solver.cornerLettering,
-  edgeLettering: solver.edgeLettering
-};
-function apiTest(){
-  fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  })
-    .then(response => response.json())
-    .then(responseData => {
-      // Process the response data
-      console.log(responseData);
-    })
-    .catch(error => {
-      // Handle any errors
-      console.error('Error:', error.message);
-    });
+function letterToFace(c){
+  var pos = c.charCodeAt(0)-97;
+  pos/=4;
+  pos = Math.floor(pos);
+  switch(pos){
+    case 0:
+      return 'U';
+    case 1:
+      return 'L';
+    case 2:
+      return 'F';
+    case 3:
+      return 'R';
+    case 4:
+      return 'B';
+    case 5:
+      return 'D';
+  }
+}
+function generateCubeString() {
+  // Call the solveCube method from the godSolve class
+  var s = Array(54).fill('B');
+  
+  var faceOrdering = [0,3,2,5,1,4];//go from our lettering, to his lettering
+      
+  for(let i = 0; i<6; i++){
+      for(let j =0; j<4; j++){
+          var c = solver.cornerLettering[faceOrdering[i]][j];
+          if(j==0) s[9*i] =  letterToFace(c);
+          else if(j==1) s[9*i+2] = letterToFace(c);
+          else if(j==2) s[9*i+8] = letterToFace(c);
+          else if(j==3) s[9*i+6] = letterToFace(c);
+      }
+  }
+  for(let i = 0; i<6; i++){
+    for(let j =0; j<4; j++){
+        var c = solver.edgeLettering[faceOrdering[i]][j];
+        if(j==0) s[9*i+1] = letterToFace(c);
+        else if(j==1) s[9*i+5] = letterToFace(c);
+        else if(j==2) s[9*i+7] = letterToFace(c);
+        else if(j==3) s[9*i+3] = letterToFace(c);
+    }
+    var c = 'U';
+    switch(i){
+        case 0:
+            c = 'U';
+            break;
+        case 1:
+            c = 'R';
+            break;
+        case 2:
+            c = 'F';
+            break;
+        case 3:
+            c = 'D';
+            break;
+        case 4:
+            c = 'L';
+            break;
+        case 5:  
+            c= 'B';
+            break; 
+    }
+    s[9*i+4] = c;
+  }
+  var cubeString = "";
+  for(let i =0; i<54; i++){
+    cubeString+=s[i];
+  }
+  
+  return cubeString;
+}
+
+async function apiTest(){
+  var cubeString = generateCubeString();
+  var link = '/api/' + cubeString;
+  console.log(link);
+  const response = await fetch(link);
+  const text = await response.text();
+  console.log(text);
+
+  moveCount = 1;
+  isBig = 1;
+  for(let i =0; i<text.length; i+=3){
+    var f = text[i+1];
+    if(f==='1'){
+      switch(text[i]){
+        case 'U':
+          rotateU();
+          break;
+        case 'D':
+          rotateD();
+          break;
+        case 'L':
+          rotateL();
+          break;
+        case 'R':
+          rotateR();
+          break;
+        case 'F':
+          rotateF();
+          break;
+        case 'B':
+          rotateB();
+          break;
+      }
+    }
+    else if(f==='2'){
+      switch(text[i]){
+        case 'U':
+          rotateU();
+          rotateU();
+          break;
+        case 'D':
+          rotateD();
+          rotateD();
+          break;
+        case 'L':
+          rotateL();
+          rotateL();
+          break;
+        case 'R':
+          rotateR();
+          rotateR();
+          break;
+        case 'F':
+          rotateF();
+          rotateF();
+          break;
+        case 'B':
+          rotateB();
+          rotateB();
+          break;
+      }
+    }
+    else{
+      switch(text[i]){
+        case 'U':
+          rotateUi();
+          break;
+        case 'D':
+          rotateDi();
+          break;
+        case 'L':
+          rotateLi();
+          break;
+        case 'R':
+          rotateRi();
+          break;
+        case 'F':
+          rotateFi();
+          break;
+        case 'B':
+          rotateBi();
+          break;
+      }
+    }
+  }
+  disableAllButtons(moveCount*speed*1.1);
+  isBig = 0;
 }
 
