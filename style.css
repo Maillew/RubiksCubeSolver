@@ -5,7 +5,6 @@
 }
 body,html{
     overflow-x:hidden;
-
 }
 
 .webgl{
@@ -61,10 +60,10 @@ nav ul{
 
     position: absolute; /*RN CANT BE ABSOLUTE, CUZ ITS UGLY WHEN WINDOW SIZE IS DIFF!! try to make it more like the navbar*/
     z-index: 3;
-    top: 150px;
-    right: 175px;
-    width: 150px;
-    height: 500px;
+    top: 20%;
+    right: 10%;
+    width: 15%;
+    height: 60%;
 }
 /* Clear floats (clearfix hack) */
 .moveBtns:after {
@@ -72,7 +71,6 @@ nav ul{
     clear: both;
     display: table;
 }
-
 /* Add a background color on hover */
 .moveBtns button:hover {
     background-color: #7b7b7b;
@@ -81,7 +79,8 @@ nav ul{
 .moveBtns button{
     font-size: 20px;
     font-family: 'Poppins', sans-serif;
-
+    
+    background-color: azure;
     width: 90%;
     height: 90%;
     margin: 5px;
