@@ -143,8 +143,8 @@ const controls = new OrbitControls(camera,canvas)
 controls.enableDamping = true
 controls.enablePan = false//cant move object around, always centered
 controls.enableZoom = false//no zooming in
-// controls.autoRotate = true
-// controls.autoRotateSpeed = 5 
+controls.autoRotate = true
+controls.autoRotateSpeed = 5 
 
 const loop = () =>{//rerender it, so that the cube is in right position
   controls.update()
@@ -159,29 +159,10 @@ const tl = gsap.timeline({defaults: {duration: 1}})//default time duration is 1 
 
 //need to make a rubiks cube object, so it all scales in nicely
 
-// tl.fromTo(fullCube.scale, {z:0,x:0,y:0}, {z:1,x:1,y:1})//animation to start; scales all the axis
-// tl.fromTo('nav', {y: "-100%"}, {y:"0%"})//animates the nav bar in
-// tl.fromTo('.title', {opacity:0},{opacity:1})//fades in the title
-// tl.fromTo('.moveBtns', {opacity:0},{opacity:1})
+tl.fromTo('nav', {y: "-100%"}, {y:"0%"})//animates the nav bar in
+tl.fromTo('.title', {opacity:0},{opacity:1})//fades in the title
+tl.fromTo('.moveBtns', {opacity:0},{opacity:1})
 
-//mouse animation color
-// let mouseDown = false
-// let rgb = [12,23,]
-
-// window.addEventListener("mousedown", () => (mouseDown = true))
-// window.addEventListener("mouseup", () => (mouseDown = false))//makes it so that changes only happens when we are clicking down
-// window.addEventListener("mousemove", (e) => {
-//   if(mouseDown){
-//     rgb = [
-//       Math.round((e.pageX / sizes.width) * 255),
-//       Math.round((e.pageX / sizes.width) * 255),
-//       150,
-//     ]
-//     //animate
-//     let newColor = new THREE.Color(`rgb(${rgb.join(",")})`)
-//     gsap.to(cube.material.color, {r: newColor.r, g: newColor.g, b: newColor.b})
-//   }
-// })
 
 //buttons for rotations
 // const axesHelper = new THREE.AxesHelper(10);
@@ -211,21 +192,10 @@ document.getElementById("moveUi").addEventListener("click", rotateUi, false);
 document.getElementById("moveD") .addEventListener("click", rotateD,  false);
 document.getElementById("moveDi").addEventListener("click", rotateDi, false);
 
-/*
-  rn all the moves are execing at once, so thats why it gets fucked up
-    like we are execing, in the middle of rotation
-*/
-/*
-  just get last move time?
-  //last time + 500
-    doesnt work, cuz what if there is a large delay in move times
-    only works if we spam click
+document.getElementById("shuffle").addEventListener("click", randomShuffle, false);
+document.getElementById("solve").addEventListener("click", solve, false);
+document.getElementById("godSolve").addEventListener("click", apiTest, false);
 
-  ALTERNATIVELY
-    when a button is pressed, make it so that not other button can be pressed?
-    then, for the shuffle and solve methods we use the moveCount method
-  sleep?
-*/
 function sleep(ms) {
   return new Promise(resolve => {
     setTimeout(() => {
@@ -267,31 +237,7 @@ function executeRotate(axis, angle, coord){
     }
   }
 }
-//cant create another function just for the purpose of stalling, cuz itll exec the other one
-/*
-  here is the issue:
-    i think what we need to do, is create a queue of all the moves that need to get processed
-    then animate through the queue?
-    cuz rn if a lot of queries are processed at once, they timeout tgt, instead of one after the other
 
-    what if we have a moveCounter * 500?
-      we just need times between any adjancent move swaps to be > 
-    
-      sleep dont work either
-        its because we are processing all the moves at once no?
-        so theyre sleeping at the same time
-    
-    shuffle and solve, we use the move counter idea
-
-    i think the problem is that all the functions are called synchronously
-    cuz i think for the 'shuffle' 'solve', i can have a move counter for settimeout n itll work
-    so itll be like
-    i click a button
-    disables the rest
-    setTimeout, n then reenable all?
-
-
-*/
 function enableAllButtons(){
   document.getElementById("moveF").disabled = false;
   document.getElementById("moveFi").disabled = false;
@@ -305,9 +251,10 @@ function enableAllButtons(){
   document.getElementById("moveUi").disabled = false;
   document.getElementById("moveD").disabled = false;
   document.getElementById("moveDi").disabled = false;
-  document.getElementById("shuffle").disabled = false;
-  document.getElementById("solve").disabled = false;
-  document.getElementById("godSolve").disabled = false;
+  
+  document.getElementById("shuffle").addEventListener("click", randomShuffle, false);
+  document.getElementById("solve").addEventListener("click", solve, false);
+  document.getElementById("godSolve").addEventListener("click", apiTest, false);
 }
 function disableAllButtons(time){
   document.getElementById("moveF").disabled = true;
@@ -322,9 +269,10 @@ function disableAllButtons(time){
   document.getElementById("moveUi").disabled = true;
   document.getElementById("moveD").disabled = true;
   document.getElementById("moveDi").disabled = true;
-  document.getElementById("shuffle").disabled = true;
-  document.getElementById("solve").disabled = true;
-  document.getElementById("godSolve").disabled = true;
+  
+  document.getElementById("shuffle").removeEventListener("click", randomShuffle, false);
+  document.getElementById("solve").removeEventListener("click", solve, false);
+  document.getElementById("godSolve").removeEventListener("click", apiTest, false);
   setTimeout(enableAllButtons,time);
 }
 
@@ -332,7 +280,6 @@ var isBig = 0;
 var moveCount = 0;
 function rotateF(){
   solver.moveFront(0);
-  console.log("F");
   if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'z',-Math.PI/2,1);
   else{
     setTimeout(executeRotate,speed*1.1,'z',-Math.PI/2,1);
@@ -342,7 +289,6 @@ function rotateF(){
 }
 function rotateFi(){
   solver.moveFront(1);
-  console.log("Fi");
   if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'z',Math.PI/2,1);
   else{
     setTimeout(executeRotate,speed*1.1,'z',Math.PI/2,1);
@@ -352,7 +298,6 @@ function rotateFi(){
 }
 function rotateB(){
   solver.moveBack(0);
-  console.log("B");
   if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'z',Math.PI/2,-1);
   else{
     setTimeout(executeRotate,speed*1.1,'z',Math.PI/2,-1);
@@ -362,7 +307,6 @@ function rotateB(){
 }
 function rotateBi(){
   solver.moveBack(1);
-  console.log("Bi");
   if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'z',-Math.PI/2,-1);
   else{
     setTimeout(executeRotate,speed*1.1,'z',-Math.PI/2,-1);
@@ -372,7 +316,6 @@ function rotateBi(){
 }
 function rotateL(){
   solver.moveLeft(0);
-  console.log("L");
   if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',Math.PI/2,-1);
   else{
     setTimeout(executeRotate,speed*1.1,'x',Math.PI/2,-1);
@@ -382,7 +325,6 @@ function rotateL(){
 }
 function rotateLi(){
   solver.moveLeft(1);
-  console.log("Li");
   if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',-Math.PI/2,-1);
   else{
     setTimeout(executeRotate,speed*1.1,'x',-Math.PI/2,-1);
@@ -392,7 +334,6 @@ function rotateLi(){
 }
 function rotateR(){
   solver.moveRight(0);
-  console.log("R");
   if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',-Math.PI/2,1);
   else{
     setTimeout(executeRotate,speed*1.1,'x',-Math.PI/2,1);
@@ -402,7 +343,6 @@ function rotateR(){
 }
 function rotateRi(){
   solver.moveRight(1);
-  console.log("Ri");
   if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',Math.PI/2,1);
   else{
     setTimeout(executeRotate,speed*1.1,'x',Math.PI/2,1);
@@ -412,7 +352,6 @@ function rotateRi(){
 }
 function rotateU(){
   solver.moveUp(0);
-  console.log("U");
   if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',-Math.PI/2,1);
   else{
     setTimeout(executeRotate,speed*1.1,'y',-Math.PI/2,1);
@@ -422,7 +361,6 @@ function rotateU(){
 }
 function rotateUi(){
   solver.moveUp(1);
-  console.log("Ui");
   if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',Math.PI/2,1);
   else{
     setTimeout(executeRotate,speed*1.1,'y',Math.PI/2,1);
@@ -432,7 +370,6 @@ function rotateUi(){
 }
 function rotateD(){
   solver.moveDown(0);
-  console.log("D");
   if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',Math.PI/2,-1);
   else{
     setTimeout(executeRotate,speed*1.1,'y',Math.PI/2,-1);
@@ -442,7 +379,6 @@ function rotateD(){
 }
 function rotateDi(){
   solver.moveDown(1);
-  console.log("Di");
   if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',-Math.PI/2,-1);
   else{
     setTimeout(executeRotate,speed*1.1,'y',-Math.PI/2,-1);
@@ -453,7 +389,6 @@ function rotateDi(){
 // M follows L direction,  E follows D direction, S follows F direction
 function rotateM(){
   solver.moveM(0);
-  console.log("M");
   if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',Math.PI/2,0);
   else{
     setTimeout(executeRotate,speed*1.1,'x',Math.PI/2,0);
@@ -463,7 +398,6 @@ function rotateM(){
 }
 function rotateMi(){
   solver.moveM(1);
-  console.log("Mi");
   if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',-Math.PI/2,0);
   else{
     setTimeout(executeRotate,speed*1.1,'x',-Math.PI/2,0);
@@ -473,7 +407,6 @@ function rotateMi(){
 }
 function rotateE(){
   solver.moveE(0);
-  console.log("E");
   if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',Math.PI/2,0);
   else{
     setTimeout(executeRotate,speed*1.1,'y',Math.PI/2,0);
@@ -483,117 +416,12 @@ function rotateE(){
 }
 function rotateEi(){
   solver.moveE(1);
-  console.log("Ei");
   if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',-Math.PI/2,0);
   else{
     setTimeout(executeRotate,speed*1.1,'y',-Math.PI/2,0);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
-}
-
-//shuffle and solver
-document.getElementById("shuffle").addEventListener("click", randomShuffle, false);
-document.getElementById("solve").addEventListener("click", solve, false);
-function randomShuffle(){
-  var moves = solver.randomScramble();
-  moveCount = 1;
-  isBig = 1;
-  for(let i =0; i<moves.length; i++){
-    var [type,f] = moves[i];//frequency
-    if(f==0){
-      switch(type){
-        case 'U': {
-          rotateU();
-          break;
-        }
-        case 'D':{
-          rotateD();
-          break;
-        }
-        case 'L':{
-          rotateL();
-          break;
-        }
-        case 'R':{
-          rotateR();
-          break;
-        }
-        case 'F':{
-          rotateF();
-          break;
-        }
-        case 'B':{
-          rotateB();
-          break;
-        }
-      }
-    }
-    else if (f==2){
-      switch(type){
-        case 'U': {
-          rotateU();
-          rotateU();
-          break;
-        }
-        case 'D':{
-          rotateD();
-          rotateD();
-          break;
-        }
-        case 'L':{
-          rotateL();
-          rotateL();
-          break;
-        }
-        case 'R':{
-          rotateR();
-          rotateR();
-          break;
-        }
-        case 'F':{
-          rotateF();
-          rotateF();
-          break;
-        }
-        case 'B':{
-          rotateB();
-          rotateB();
-          break;
-        }
-      }
-    }
-    else{
-      switch(type){
-        case 'U': {
-          rotateUi();
-          break;
-        }
-        case 'D':{
-          rotateDi();
-          break;
-        }
-        case 'L':{
-          rotateLi();
-          break;
-        }
-        case 'R':{
-          rotateRi();
-          break;
-        }
-        case 'F':{
-          rotateFi();
-          break;
-        }
-        case 'B':{
-          rotateBi();
-          break;
-        }
-      }
-    }
-  }
-  disableAllButtons(moveCount*speed*1.1);
-  isBig = 0;
 }
 function cornerSwap(){
   rotateR();
@@ -994,11 +822,113 @@ function orientEdge(letter){
           break;
   }
 }
+//shuffle and solver
+function randomShuffle(){
+  var moves = solver.randomScramble();
+  moveCount = 0;
+  isBig = 1;
+  for(let i =0; i<moves.length; i++){
+    var [type,f] = moves[i];//frequency
+    if(f==0){
+      switch(type){
+        case 'U': {
+          rotateU();
+          break;
+        }
+        case 'D':{
+          rotateD();
+          break;
+        }
+        case 'L':{
+          rotateL();
+          break;
+        }
+        case 'R':{
+          rotateR();
+          break;
+        }
+        case 'F':{
+          rotateF();
+          break;
+        }
+        case 'B':{
+          rotateB();
+          break;
+        }
+      }
+    }
+    else if (f==2){
+      switch(type){
+        case 'U': {
+          rotateU();
+          rotateU();
+          break;
+        }
+        case 'D':{
+          rotateD();
+          rotateD();
+          break;
+        }
+        case 'L':{
+          rotateL();
+          rotateL();
+          break;
+        }
+        case 'R':{
+          rotateR();
+          rotateR();
+          break;
+        }
+        case 'F':{
+          rotateF();
+          rotateF();
+          break;
+        }
+        case 'B':{
+          rotateB();
+          rotateB();
+          break;
+        }
+      }
+    }
+    else{
+      switch(type){
+        case 'U': {
+          rotateUi();
+          break;
+        }
+        case 'D':{
+          rotateDi();
+          break;
+        }
+        case 'L':{
+          rotateLi();
+          break;
+        }
+        case 'R':{
+          rotateRi();
+          break;
+        }
+        case 'F':{
+          rotateFi();
+          break;
+        }
+        case 'B':{
+          rotateBi();
+          break;
+        }
+      }
+    }
+  }
+  disableAllButtons(moveCount*speed*1.1);
+  isBig = 0;
+}
+
 function solve(){
   solver.cornersVisited.fill(0);
   solver.edgesVisited.fill(0);
   var cornerMoves = solver.solveCorners();
-  moveCount = 1;
+  moveCount = 0;
   isBig = 1;
   for(let i =0; i<cornerMoves.length; i++){
     var letter = cornerMoves[i];
@@ -1013,7 +943,6 @@ function solve(){
   isBig = 0;
 }
 
-document.getElementById("godSolve").addEventListener("click", apiTest, false);
 
 function letterToFace(c){
   var pos = c.charCodeAt(0)-97;
@@ -1091,12 +1020,10 @@ function generateCubeString() {
 async function apiTest(){
   var cubeString = generateCubeString();
   var link = '/api/' + cubeString;
-  console.log(link);
   const response = await fetch(link);
   const text = await response.text();
-  console.log(text);
 
-  moveCount = 1;
+  moveCount = 0;
   isBig = 1;
   for(let i =0; i<text.length; i+=3){
     var f = text[i+1];
@@ -1176,4 +1103,3 @@ async function apiTest(){
   disableAllButtons(moveCount*speed*1.1);
   isBig = 0;
 }
-
