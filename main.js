@@ -178,6 +178,8 @@ function checkCoordSame(c1, val, axis){
   if(axis =='y') return c1.position.y > val - epsilon && c1.position.y < val + epsilon;
   if(axis =='z') return c1.position.z > val - epsilon && c1.position.z < val + epsilon;  
 }
+const slider = document.getElementById("myRange");
+slider.addEventListener("input", handleSliderChange,false);
 
 document.getElementById("moveF") .addEventListener("click", rotateF,  false);
 document.getElementById("moveFi").addEventListener("click", rotateFi, false);
@@ -255,6 +257,8 @@ function enableAllButtons(){
   document.getElementById("shuffle").addEventListener("click", randomShuffle, false);
   document.getElementById("solve").addEventListener("click", solve, false);
   document.getElementById("godSolve").addEventListener("click", apiTest, false);
+  slider.addEventListener("input", handleSliderChange,false);
+  handleSliderChange();//so if we change slider while moving, it can adjust
 }
 function disableAllButtons(time){
   document.getElementById("moveF").disabled = true;
@@ -273,6 +277,8 @@ function disableAllButtons(time){
   document.getElementById("shuffle").removeEventListener("click", randomShuffle, false);
   document.getElementById("solve").removeEventListener("click", solve, false);
   document.getElementById("godSolve").removeEventListener("click", apiTest, false);
+  slider.removeEventListener("input", handleSliderChange,false);
+
   setTimeout(enableAllButtons,time);
 }
 
@@ -1103,3 +1109,10 @@ async function apiTest(){
   disableAllButtons(moveCount*speed*1.1);
   isBig = 0;
 }
+
+
+function handleSliderChange() {
+  const sp = slider.value;
+  speed = -sp;//slider from -500 to -150
+}
+
