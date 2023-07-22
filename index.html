@@ -53,5 +53,12 @@
         <td> <button type = "button" id = "moveDi">D'</button>
       </tr>
     </table>
+    <table class="speed">
+      <caption> Speed (ms)</caption>
+      <tr>
+        <td> <input class = "slider" type="range" min="150" max="500" value="325" oninput="rangeValue.innerText = this.value"></td>
+        <td> <p id="rangeValue">325</p> </td>
+      </tr>
+    </table>
   </body>
 </html>
