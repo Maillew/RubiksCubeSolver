@@ -159,9 +159,15 @@ const tl = gsap.timeline({defaults: {duration: 1}})//default time duration is 1 
 
 //need to make a rubiks cube object, so it all scales in nicely
 
-tl.fromTo('nav', {y: "-100%"}, {y:"0%"})//animates the nav bar in
-tl.fromTo('.title', {opacity:0},{opacity:1})//fades in the title
-tl.fromTo('.moveBtns', {opacity:0},{opacity:1})
+tl.fromTo('nav', {y: "-100%"}, {y:"0%"},'0')//animates the nav bar in
+tl.fromTo('.title', {opacity:0},{opacity:1},'1')//fades in the title
+tl.fromTo('.webgl', {opacity:0},{opacity:1},'1')//fades in the title
+
+tl.fromTo('.slider', {opacity:0},{opacity:1},'2')
+tl.fromTo('.labels', {opacity:0},{opacity:1},'2')
+tl.fromTo('.speedTitle', {opacity:0},{opacity:1},'2')
+
+tl.fromTo('.moveBtns', {opacity:0},{opacity:1},'2')
 
 
 //buttons for rotations
@@ -205,7 +211,7 @@ function sleep(ms) {
     }, ms);
   });
 }
-var speed = 150;
+var speed = 325;
 
 
 function tweenMove(cube, axis, angle){
