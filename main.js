@@ -75,7 +75,6 @@ function generateCube(x,y,z){
   cube.position.z = z;
   cube.position.y = y;
   cube.position.x = x;
-
   fullCube.push(cube)
 }
 /*
@@ -117,7 +116,9 @@ scene.add(light, light2)//so the whole cube is illuminated
 
 //add camera
 const camera = new THREE.PerspectiveCamera(45,sizes.width/sizes.height, 0.1, 100)
-camera.position.z = 20;
+camera.position.z = 18;
+camera.position.x = 8;
+camera.position.y = 8;
 scene.add(camera);
 
 //renderer
@@ -143,8 +144,8 @@ const controls = new OrbitControls(camera,canvas)
 controls.enableDamping = true
 controls.enablePan = false//cant move object around, always centered
 controls.enableZoom = false//no zooming in
-controls.autoRotate = true
-controls.autoRotateSpeed = 5 
+// controls.autoRotate = true
+// controls.autoRotateSpeed = 5 
 
 const loop = () =>{//rerender it, so that the cube is in right position
   controls.update()
@@ -211,7 +212,7 @@ function sleep(ms) {
     }, ms);
   });
 }
-var speed = 325;
+var speed = 225;
 
 
 function tweenMove(cube, axis, angle){
@@ -259,7 +260,8 @@ function enableAllButtons(){
   document.getElementById("moveUi").disabled = false;
   document.getElementById("moveD").disabled = false;
   document.getElementById("moveDi").disabled = false;
-  
+  document.getElementById("myRange").disabled = false;
+
   document.getElementById("shuffle").addEventListener("click", randomShuffle, false);
   document.getElementById("solve").addEventListener("click", solve, false);
   document.getElementById("godSolve").addEventListener("click", apiTest, false);
@@ -279,7 +281,8 @@ function disableAllButtons(time){
   document.getElementById("moveUi").disabled = true;
   document.getElementById("moveD").disabled = true;
   document.getElementById("moveDi").disabled = true;
-  
+  document.getElementById("myRange").disabled = true;
+
   document.getElementById("shuffle").removeEventListener("click", randomShuffle, false);
   document.getElementById("solve").removeEventListener("click", solve, false);
   document.getElementById("godSolve").removeEventListener("click", apiTest, false);
