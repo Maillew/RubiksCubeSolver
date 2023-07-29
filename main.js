@@ -205,13 +205,6 @@ document.getElementById("shuffle").addEventListener("click", randomShuffle, fals
 document.getElementById("solve").addEventListener("click", solve, false);
 document.getElementById("godSolve").addEventListener("click", apiTest, false);
 
-function sleep(ms) {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve('resolved');
-    }, ms);
-  });
-}
 var speed = 225;
 
 
@@ -269,6 +262,7 @@ function enableAllButtons(){
   handleSliderChange();//so if we change slider while moving, it can adjust
 }
 function disableAllButtons(time){
+  time/=1000;
   document.getElementById("moveF").disabled = true;
   document.getElementById("moveFi").disabled = true;
   document.getElementById("moveB").disabled = true;
@@ -288,115 +282,115 @@ function disableAllButtons(time){
   document.getElementById("godSolve").removeEventListener("click", apiTest, false);
   slider.removeEventListener("input", handleSliderChange,false);
 
-  setTimeout(enableAllButtons,time);
+  gsap.delayedCall(time,enableAllButtons);
 }
 
 var isBig = 0;
 var moveCount = 0;
 function rotateF(){
   solver.moveFront(0);
-  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'z',-Math.PI/2,1);
+  if(isBig) gsap.delayedCall(moveCount*speed*1.1/1000,executeRotate,['z',-Math.PI/2,1]);
   else{
-    setTimeout(executeRotate,speed*1.1,'z',-Math.PI/2,1);
+    gsap.delayedCall(speed*1.1/1000,executeRotate,['z',-Math.PI/2,1]);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
 }
 function rotateFi(){
   solver.moveFront(1);
-  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'z',Math.PI/2,1);
+  if(isBig) gsap.delayedCall(moveCount*speed*1.1/1000,executeRotate,['z',Math.PI/2,1]);
   else{
-    setTimeout(executeRotate,speed*1.1,'z',Math.PI/2,1);
+    gsap.delayedCall(speed*1.1/1000,executeRotate,['z',Math.PI/2,1]);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
 }
 function rotateB(){
   solver.moveBack(0);
-  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'z',Math.PI/2,-1);
+  if(isBig) gsap.delayedCall(moveCount*speed*1.1/1000,executeRotate,['z',Math.PI/2,-1]);
   else{
-    setTimeout(executeRotate,speed*1.1,'z',Math.PI/2,-1);
+    gsap.delayedCall(speed*1.1/1000,executeRotate,['z',Math.PI/2,-1]);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
 }
 function rotateBi(){
   solver.moveBack(1);
-  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'z',-Math.PI/2,-1);
+  if(isBig) gsap.delayedCall(moveCount*speed*1.1/1000,executeRotate,['z',-Math.PI/2,-1]);
   else{
-    setTimeout(executeRotate,speed*1.1,'z',-Math.PI/2,-1);
+    gsap.delayedCall(speed*1.1/1000,executeRotate,['z',-Math.PI/2,-1]);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
 }
 function rotateL(){
   solver.moveLeft(0);
-  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',Math.PI/2,-1);
+  if(isBig) gsap.delayedCall(moveCount*speed*1.1/1000,executeRotate,['x',Math.PI/2,-1]);
   else{
-    setTimeout(executeRotate,speed*1.1,'x',Math.PI/2,-1);
+    gsap.delayedCall(speed*1.1/1000,executeRotate,['x',Math.PI/2,-1]);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
 }
 function rotateLi(){
   solver.moveLeft(1);
-  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',-Math.PI/2,-1);
+  if(isBig) gsap.delayedCall(moveCount*speed*1.1/1000,executeRotate,['x',-Math.PI/2,-1]);
   else{
-    setTimeout(executeRotate,speed*1.1,'x',-Math.PI/2,-1);
+    gsap.delayedCall(speed*1.1/1000,executeRotate,['x',-Math.PI/2,-1]);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
 }
 function rotateR(){
   solver.moveRight(0);
-  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',-Math.PI/2,1);
+  if(isBig) gsap.delayedCall(moveCount*speed*1.1/1000,executeRotate,['x',-Math.PI/2,1]);
   else{
-    setTimeout(executeRotate,speed*1.1,'x',-Math.PI/2,1);
+    gsap.delayedCall(speed*1.1/1000,executeRotate,['x',-Math.PI/2,1]);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
 }
 function rotateRi(){
   solver.moveRight(1);
-  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',Math.PI/2,1);
+  if(isBig) gsap.delayedCall(moveCount*speed*1.1/1000,executeRotate,['x',Math.PI/2,1]);
   else{
-    setTimeout(executeRotate,speed*1.1,'x',Math.PI/2,1);
+    gsap.delayedCall(speed*1.1/1000,executeRotate,['x',Math.PI/2,1]);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
 }
 function rotateU(){
   solver.moveUp(0);
-  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',-Math.PI/2,1);
+  if(isBig) gsap.delayedCall(moveCount*speed*1.1/1000,executeRotate,['y',-Math.PI/2,1]);
   else{
-    setTimeout(executeRotate,speed*1.1,'y',-Math.PI/2,1);
+    gsap.delayedCall(speed*1.1/1000,executeRotate,['y',-Math.PI/2,1]);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
 }
 function rotateUi(){
   solver.moveUp(1);
-  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',Math.PI/2,1);
+  if(isBig) gsap.delayedCall(moveCount*speed*1.1/1000,executeRotate,['y',Math.PI/2,1]);
   else{
-    setTimeout(executeRotate,speed*1.1,'y',Math.PI/2,1);
+    gsap.delayedCall(speed*1.1/1000,executeRotate,['y',Math.PI/2,1]);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
 }
 function rotateD(){
   solver.moveDown(0);
-  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',Math.PI/2,-1);
+  if(isBig) gsap.delayedCall(moveCount*speed*1.1/1000,executeRotate,['y',Math.PI/2,-1]);
   else{
-    setTimeout(executeRotate,speed*1.1,'y',Math.PI/2,-1);
+    gsap.delayedCall(speed*1.1/1000,executeRotate,['y',Math.PI/2,-1]);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
 }
 function rotateDi(){
   solver.moveDown(1);
-  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',-Math.PI/2,-1);
+  if(isBig) gsap.delayedCall(moveCount*speed*1.1/1000,executeRotate,['y',-Math.PI/2,-1]);
   else{
-    setTimeout(executeRotate,speed*1.1,'y',-Math.PI/2,-1);
+    gsap.delayedCall(speed*1.1/1000,executeRotate,['y',-Math.PI/2,-1]);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
@@ -404,36 +398,36 @@ function rotateDi(){
 // M follows L direction,  E follows D direction, S follows F direction
 function rotateM(){
   solver.moveM(0);
-  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',Math.PI/2,0);
+  if(isBig) gsap.delayedCall(moveCount*speed*1.1/1000,executeRotate,['x',Math.PI/2,0]);
   else{
-    setTimeout(executeRotate,speed*1.1,'x',Math.PI/2,0);
+    gsap.delayedCall(speed*1.1/1000,executeRotate,['x',Math.PI/2,0]);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
 }
 function rotateMi(){
   solver.moveM(1);
-  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'x',-Math.PI/2,0);
+  if(isBig) gsap.delayedCall(moveCount*speed*1.1/1000,executeRotate,['x',-Math.PI/2,0]);
   else{
-    setTimeout(executeRotate,speed*1.1,'x',-Math.PI/2,0);
+    gsap.delayedCall(speed*1.1/1000,executeRotate,['x',-Math.PI/2,0]);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
 }
 function rotateE(){
   solver.moveE(0);
-  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',Math.PI/2,0);
+  if(isBig) gsap.delayedCall(moveCount*speed*1.1/1000,executeRotate,['y',Math.PI/2,0]);
   else{
-    setTimeout(executeRotate,speed*1.1,'y',Math.PI/2,0);
+    gsap.delayedCall(speed*1.1/1000,executeRotate,['y',Math.PI/2,0]);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
 }
 function rotateEi(){
   solver.moveE(1);
-  if(isBig) setTimeout(executeRotate,moveCount*speed*1.1,'y',-Math.PI/2,0);
+  if(isBig) gsap.delayedCall(moveCount*speed*1.1/1000,executeRotate,['y',-Math.PI/2,0]);
   else{
-    setTimeout(executeRotate,speed*1.1,'y',-Math.PI/2,0);
+    gsap.delayedCall(speed*1.1/1000,executeRotate,['y',-Math.PI/2,0]);
     disableAllButtons(speed*1.1);
   }
   moveCount++;
