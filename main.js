@@ -4,6 +4,7 @@ import "./style.css"
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 import gsap from 'gsap'
 import TWEEN from '@tweenjs/tween.js'
+import { _ticker } from 'gsap/gsap-core';
 
 const scene = new THREE.Scene()
 const solver = new Solver();
@@ -98,7 +99,6 @@ for(let i =0; i < fullCube.length; i++){
   scene.add(fullCube[i]);
 }
 
-
 //sizes
 const sizes = {
   width: window.innerWidth,
@@ -117,8 +117,8 @@ scene.add(light, light2)//so the whole cube is illuminated
 //add camera
 const camera = new THREE.PerspectiveCamera(45,sizes.width/sizes.height, 0.1, 100)
 camera.position.z = 18;
-camera.position.x = 8;
-camera.position.y = 8;
+camera.position.x = 3;
+camera.position.y = 5;
 scene.add(camera);
 
 //renderer
@@ -145,7 +145,8 @@ controls.enableDamping = true
 controls.enablePan = false//cant move object around, always centered
 controls.enableZoom = false//no zooming in
 // controls.autoRotate = true
-// controls.autoRotateSpeed = 5 
+// controls.autoRotateSpeed = 5
+
 
 const loop = () =>{//rerender it, so that the cube is in right position
   controls.update()
